@@ -1,0 +1,4 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/@Game/Scenes/BettingsScene/UI/UI_BettingScene.uss?fileID=7433441132597879392&amp;guid=aef87e1949a3e5849a295d9e09cfe6a1&amp;type=3#UI_BettingScene" />
+    <ui:VisualElement style="flex-grow: 1;" />
+</ui:UXML>
