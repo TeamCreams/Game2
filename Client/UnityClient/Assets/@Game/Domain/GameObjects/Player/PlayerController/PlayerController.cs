@@ -21,6 +21,8 @@ public class PlayerController : BaseObject
         }
     }
 
+    private float _currentMoveSpeed;
+
     public override bool Init()
     {
         if (false == base.Init())
@@ -29,6 +31,7 @@ public class PlayerController : BaseObject
         }
         _animator = GetComponentInChildren<Animator>();
         _characterController = GetComponent<CharacterController>();
+        
         return true;
     }
 
@@ -47,8 +50,8 @@ public class PlayerController : BaseObject
             case EPlayerState.Move:
                 Update_Move();
                 break;
-            case EPlayerState.Boring:
-                Update_Boring();
+            case EPlayerState.Die:
+                Update_Die();
                 break;
         }
     }
@@ -56,17 +59,26 @@ public class PlayerController : BaseObject
     #region Update
     private void Update_Idle()
     {
-
+        if (Managers.Game.JoystickState == EJoystickState.PointerDown)
+        {
+            this.State = EPlayerState.Move;
+        }
     }
 
     private void Update_Move()
     {
-
+        _currentMoveSpeed = Mathf.Clamp01(Managers.Game.JoystickAmount.magnitude);
+        _animator.SetFloat("MoveSpeed", Mathf.Abs(_currentMoveSpeed));
+        _animator.SetFloat("MoveDirectionX", Managers.Game.JoystickAmount.x);
+        _animator.SetFloat("MoveDirectionY", Managers.Game.JoystickAmount.y);
+            
+        Vector3 motion = new Vector3(Managers.Game.JoystickAmount.x, 0, Managers.Game.JoystickAmount.y);
+        _characterController.Move(motion * Time.deltaTime);
     }
 
-    private void Update_Boring()
+    private void Update_Die()
     {
-        
+        _animator.SetTrigger("isDie");
     }
 
     #endregion

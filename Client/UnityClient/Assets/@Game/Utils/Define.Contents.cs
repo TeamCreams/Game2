@@ -22,7 +22,7 @@ public static partial class Define
         Idle = 0,
         Move = 1,
         Run = 2,
-        Boring = 3,
+        Die = 3,
     }
 
 }
