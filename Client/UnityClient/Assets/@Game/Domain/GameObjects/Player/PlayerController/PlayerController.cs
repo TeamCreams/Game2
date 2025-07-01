@@ -1,9 +1,15 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using static Define;
 
 public class PlayerController : BaseObject
 {
+    private Stats _stats = null;
+    private Stats Stats => _stats;
+
+
     private Animator _animator;
     private CharacterController _characterController;
     public Action<EPlayerState, EPlayerState> OnChangedState;
@@ -20,9 +26,8 @@ public class PlayerController : BaseObject
             }
         }
     }
-
+    private List<StatModifier> _statModifier;
     private float _currentMoveSpeed;
-
     public override bool Init()
     {
         if (false == base.Init())
@@ -31,7 +36,7 @@ public class PlayerController : BaseObject
         }
         _animator = GetComponentInChildren<Animator>();
         _characterController = GetComponent<CharacterController>();
-        
+
         return true;
     }
 
@@ -54,6 +59,12 @@ public class PlayerController : BaseObject
                 Update_Die();
                 break;
         }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            _state = EPlayerState.Die;
+            Debug.Log("Q key was pressed");
+        }
     }
 
     #region Update
@@ -67,13 +78,25 @@ public class PlayerController : BaseObject
 
     private void Update_Move()
     {
+        if (Managers.Game.JoystickState == EJoystickState.PointerUp)
+        {
+            this.State = EPlayerState.Idle;
+        }
         _currentMoveSpeed = Mathf.Clamp01(Managers.Game.JoystickAmount.magnitude);
         _animator.SetFloat("MoveSpeed", Mathf.Abs(_currentMoveSpeed));
         _animator.SetFloat("MoveDirectionX", Managers.Game.JoystickAmount.x);
         _animator.SetFloat("MoveDirectionY", Managers.Game.JoystickAmount.y);
-            
+
         Vector3 motion = new Vector3(Managers.Game.JoystickAmount.x, 0, Managers.Game.JoystickAmount.y);
-        _characterController.Move(motion * Time.deltaTime);
+        _characterController.Move(motion * Time.deltaTime * this._stats.StatDic[EStatType.MovementSpeed]);
+
+        Transform animationTransform = _animator.gameObject.transform;
+        Vector3 moveDirection = new Vector3(Managers.Game.JoystickAmount.x, 0, Managers.Game.JoystickAmount.y);
+        if (0.1f < moveDirection.magnitude)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            animationTransform.rotation = Quaternion.Slerp(animationTransform.rotation, targetRotation, Time.deltaTime * 30f);
+        }
     }
 
     private void Update_Die()

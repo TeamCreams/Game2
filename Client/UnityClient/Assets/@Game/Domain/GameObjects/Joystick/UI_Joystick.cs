@@ -38,7 +38,7 @@ public class UI_Joystick : UI_Base
 	{
         _touchPosition = eventData.position;
         GetImage((int)Images.Ground).gameObject.transform.position = _touchPosition;
-        //Managers.Game.JoystickState = Define.EJoystickState.PointerDown;
+        Managers.Game.JoystickState = Define.EJoystickState.PointerDown;
     }
     void OnDrag(PointerEventData eventData)
     {
@@ -52,23 +52,21 @@ public class UI_Joystick : UI_Base
         }
         GetImage((int)Images.Lever).transform.position = _touchPosition + moveDir;
 
-        //Managers.Game.JoystickAmount = moveDir.normalized * (moveDir.magnitude / leverRange);
-        //Managers.Game.JoystickState = Define.EJoystickState.Drag;
+        Managers.Game.JoystickAmount = moveDir.normalized * (moveDir.magnitude / leverRange);
+        Managers.Game.JoystickState = Define.EJoystickState.Drag;
     }
     void OnEndDrag(PointerEventData eventData)
     {
         GetImage((int)Images.Lever).gameObject.transform.position = _touchPosition;
-        //Managers.Game.JoystickAmount = Vector2.zero;
-        //Managers.Game.JoystickState = Define.EJoystickState.PointerUp;
+        Managers.Game.JoystickAmount = Vector2.zero;
+        Managers.Game.JoystickState = Define.EJoystickState.PointerUp;
     }
 
     public void JoystickMove()
     {
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle
-     (_rectTransform, Input.mousePosition, null, out Vector2 localPoint))
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(_rectTransform, Input.mousePosition, null, out Vector2 localPoint))
         {
-            var clampedDir = localPoint.magnitude < leverRange ?
-           localPoint : localPoint.normalized * leverRange;
+            var clampedDir = localPoint.magnitude < leverRange ? localPoint : localPoint.normalized * leverRange;
 
             GetImage((int)Images.Lever).rectTransform.anchoredPosition = clampedDir;
 

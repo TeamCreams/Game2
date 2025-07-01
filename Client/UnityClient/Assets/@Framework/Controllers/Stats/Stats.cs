@@ -107,7 +107,23 @@ public class Stats
         }
     }
     private float _hp;
-
+    public Stats()
+    {
+        StatDic[EStatType.Hp] = 100;
+        StatDic[EStatType.MaxHp] = 100;
+        StatDic[EStatType.Mp] = 50;
+        StatDic[EStatType.MaxMp] = 50;
+        StatDic[EStatType.AttackPower] = 10;
+        StatDic[EStatType.DefensePower] = 5;
+        StatDic[EStatType.CriticalChance] = 5;
+        StatDic[EStatType.CriticalDamage] = 150;
+        StatDic[EStatType.MovementSpeed] = 5; // 기본 이동속도
+        StatDic[EStatType.AttackSpeed] = 100;
+        StatDic[EStatType.SkillPower] = 10;
+        StatDic[EStatType.SkillCooldownReduction] = 0;
+        StatDic[EStatType.GoldFind] = 0;
+        StatDic[EStatType.ExperienceGain] = 0;
+    }
 }
 
 public enum EStatModifierKind

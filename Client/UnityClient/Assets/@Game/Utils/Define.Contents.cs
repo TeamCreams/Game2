@@ -7,8 +7,8 @@ public static partial class Define
         BettingScene,
         InGameScene
     }
-    
-	public enum EJoystickState
+
+    public enum EJoystickState
     {
         PointerDown,
         PointerUp,
