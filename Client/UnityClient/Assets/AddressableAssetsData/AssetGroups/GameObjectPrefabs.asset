@@ -10,20 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Default Local Group
+  m_Name: GameObjectPrefabs
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
-  m_GroupName: Default Local Group
-  m_GUID: 8eb072a259120044ebbc6f80ab4df3ba
-  m_SerializeEntries:
-  - m_GUID: f1196807b37f245c29276243a749e6b5
-    m_Address: Bullet
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
+  m_GroupName: GameObjectPrefabs
+  m_GUID: e68f71b2e9a5048aea3a4bc44233110c
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 858f76a7005b4d4419c92d1103f38db4, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 795e908139823364ea8c40c6b1f0f120, type: 2}
-    - {fileID: 11400000, guid: f59dd8aee2706e84789b85cbc1f12cd7, type: 2}
+    - {fileID: 11400000, guid: 57a9647989f4246ba8b39187f818026c, type: 2}
+    - {fileID: 11400000, guid: df2cf431bfb5b4fddbedd0395dae633d, type: 2}

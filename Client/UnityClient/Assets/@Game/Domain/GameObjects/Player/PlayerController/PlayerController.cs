@@ -88,7 +88,8 @@ public class PlayerController : BaseObject
         _animator.SetFloat("MoveDirectionY", Managers.Game.JoystickAmount.y);
 
         Vector3 motion = new Vector3(Managers.Game.JoystickAmount.x, 0, Managers.Game.JoystickAmount.y);
-        _characterController.Move(motion * Time.deltaTime * this._stats.StatDic[EStatType.MovementSpeed]);
+        _characterController.Move(motion * Time.deltaTime * 5);
+        //_characterController.Move(motion * Time.deltaTime * this._stats.StatDic[EStatType.MovementSpeed]);
 
         Transform animationTransform = _animator.gameObject.transform;
         Vector3 moveDirection = new Vector3(Managers.Game.JoystickAmount.x, 0, Managers.Game.JoystickAmount.y);

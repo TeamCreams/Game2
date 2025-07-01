@@ -9,7 +9,7 @@ internal class Pool
 	private IObjectPool<GameObject> _pool;
 
 	private Transform _root;
-	private Transform Root
+	public Transform Root
 	{
 		get
 		{
@@ -23,10 +23,10 @@ internal class Pool
 		}
 	}
 
-	public Pool(GameObject prefab)
+	public Pool(GameObject prefab, int defaultCapacity = 10)
 	{
 		_prefab = prefab;
-		_pool = new ObjectPool<GameObject>(OnCreate, OnGet, OnRelease, OnDestroy);
+		_pool = new ObjectPool<GameObject>(OnCreate, OnGet, OnRelease, OnDestroy, defaultCapacity: defaultCapacity);
 	}
 
 	public void Push(GameObject go)
@@ -73,28 +73,35 @@ public class PoolManager
 	public GameObject Pop(GameObject prefab)
 	{
 		if (_pools.ContainsKey(prefab.name) == false)
-			CreatePool(prefab);
+            CreatePool(prefab);
 
-		return _pools[prefab.name].Pop();
+        return _pools[prefab.name].Pop();
 	}
 
 	public bool Push(GameObject go)
 	{
 		if (_pools.ContainsKey(go.name) == false)
-			return false;
+            return false;
+
+		go.transform.SetParent(_pools[go.name].Root, false);
 
 		_pools[go.name].Push(go);
 		return true;
 	}
+
+	public int Count()
+	{
+		return _pools.Count;
+    }
 
 	public void Clear()
 	{
 		_pools.Clear();
 	}
 
-	private void CreatePool(GameObject original)
+    public void CreatePool(GameObject original, int defaultCapacity = 10)
 	{
-		Pool pool = new Pool(original);
-		_pools.Add(original.name, pool);
-	}
+		Pool pool = new Pool(original, defaultCapacity);
+        _pools.Add(original.name, pool);
+    }
 }

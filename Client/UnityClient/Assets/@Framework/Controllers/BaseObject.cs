@@ -4,6 +4,8 @@ using UnityEngine;
 public partial class BaseObject : InitBase
 {
     public int DataTemplateID { get; set; }
+	public Action<Collider> OnTriggerEnter_Event;
+	public Action<Collider> OnTriggerExit_Event;
 
     public int ObjectId { get; set; }
 
@@ -37,6 +39,15 @@ public partial class BaseObject : InitBase
     public virtual void Clear()
     {
 
+    }
+    public virtual void OnTriggerEnter(Collider collision)
+	{
+		OnTriggerEnter_Event?.Invoke(collision);
+	}
+
+    public virtual void OnTriggerExit(Collider collision)
+    {
+        OnTriggerExit_Event?.Invoke(collision);
     }
 
     #region Static Functions
