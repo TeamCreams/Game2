@@ -15,8 +15,7 @@ public class BulletController : BaseObject
         {
             return false;
         }
-        _characterController = GetComponent<CharacterController>();
-        SpawnBullet();
+        _characterController = GetComponentInParent<CharacterController>();
         return true;
     }
 
@@ -24,7 +23,13 @@ public class BulletController : BaseObject
     {
         StopSpawning();
     }
-
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            SpawnBullet();
+        }
+    }
     public void SpawnBullet()
     {
         if (_spawner == null)
