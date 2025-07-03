@@ -29,55 +29,55 @@ public abstract class BaseScene : InitBase
         //    }
         //}
 
-        {
-            if (Camera.main == null)
-            {
-                GameObject go = new GameObject() { name = "@WorldCamera" };
-                WorldCamera = go.AddComponent<Camera>();
-                Debug.LogWarning("Main Camera가 없어 새로 생성했습니다.");
-            }
-            else
-            {
-                WorldCamera = Camera.main;
-            }
+        // {
+        //     if (Camera.main == null)
+        //     {
+        //         GameObject go = new GameObject() { name = "@WorldCamera" };
+        //         WorldCamera = go.AddComponent<Camera>();
+        //         Debug.LogWarning("Main Camera가 없어 새로 생성했습니다.");
+        //     }
+        //     else
+        //     {
+        //         WorldCamera = Camera.main;
+        //     }
 
-            // Culling Mask에서 UI 체크 해제
-            WorldCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI"));
+        //     // Culling Mask에서 UI 체크 해제
+        //     WorldCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI"));
 
-            Object obj = GameObject.Find("@WorldUICam");
-            if (obj == null)
-            {
-                GameObject go = new GameObject() { name = "@WorldUICam" };
-                UICamera = go.AddComponent<Camera>();
-            }
-            else
-            {
-                UICamera = obj.GetComponent<Camera>();
-            }
+        //     Object obj = GameObject.Find("@WorldUICam");
+        //     if (obj == null)
+        //     {
+        //         GameObject go = new GameObject() { name = "@WorldUICam" };
+        //         UICamera = go.AddComponent<Camera>();
+        //     }
+        //     else
+        //     {
+        //         UICamera = obj.GetComponent<Camera>();
+        //     }
 
-            // Culling Mask에서 UI만 활성화하고 나머지 비활성화
-            UICamera.cullingMask = 1 << LayerMask.NameToLayer("UI");
+        //     // Culling Mask에서 UI만 활성화하고 나머지 비활성화
+        //     UICamera.cullingMask = 1 << LayerMask.NameToLayer("UI");
 
 
-            // Clear Flags를 Depth only로 설정
-            UICamera.clearFlags = CameraClearFlags.Nothing;
-            UICamera.allowMSAA = false;
+        //     // Clear Flags를 Depth only로 설정
+        //     UICamera.clearFlags = CameraClearFlags.Nothing;
+        //     UICamera.allowMSAA = false;
 
-            // Depth 값을 Main Camera보다 크게 설정
-            UICamera.depth = WorldCamera != null ? WorldCamera.depth + 1 : 1;
+        //     // Depth 값을 Main Camera보다 크게 설정
+        //     UICamera.depth = WorldCamera != null ? WorldCamera.depth + 1 : 1;
 
-            // Main Camera의 나머지 설정을 UI Camera에 복사
-            UICamera.fieldOfView = WorldCamera.fieldOfView;            // 시야각 설정
-            UICamera.orthographic = WorldCamera.orthographic;          // 직교 카메라 설정
-            UICamera.orthographicSize = WorldCamera.orthographicSize;  // 직교 카메라 크기 설정
-            UICamera.nearClipPlane = WorldCamera.nearClipPlane;        // Near Clip Plane 설정
-            UICamera.farClipPlane = WorldCamera.farClipPlane;          // Far Clip Plane 설정
-            UICamera.aspect = WorldCamera.aspect;                      // 화면 비율 설정
+        //     // Main Camera의 나머지 설정을 UI Camera에 복사
+        //     UICamera.fieldOfView = WorldCamera.fieldOfView;            // 시야각 설정
+        //     UICamera.orthographic = WorldCamera.orthographic;          // 직교 카메라 설정
+        //     UICamera.orthographicSize = WorldCamera.orthographicSize;  // 직교 카메라 크기 설정
+        //     UICamera.nearClipPlane = WorldCamera.nearClipPlane;        // Near Clip Plane 설정
+        //     UICamera.farClipPlane = WorldCamera.farClipPlane;          // Far Clip Plane 설정
+        //     UICamera.aspect = WorldCamera.aspect;                      // 화면 비율 설정
 
-            UICamera.transform.parent = WorldCamera.transform;
-            UICamera.transform.localPosition = Vector3.zero;
-            UICamera.transform.localRotation = Quaternion.identity;
-        }
+        //     UICamera.transform.parent = WorldCamera.transform;
+        //     UICamera.transform.localPosition = Vector3.zero;
+        //     UICamera.transform.localRotation = Quaternion.identity;
+        // }
 
 
         this.UpdateAsObservable()

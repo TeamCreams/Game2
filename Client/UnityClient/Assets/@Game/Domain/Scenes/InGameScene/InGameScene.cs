@@ -24,7 +24,7 @@ public class InGameScene : BaseScene
             if (count == totalCount)
             {
                 //Managers.Data.Init();
-                Managers.Pool.CreatePool(Managers.Resource.Load<GameObject>("Bullet"), 100);
+                //Managers.Pool.CreatePool(Managers.Resource.Load<GameObject>("Bullet"), 100);
             }
         });
     }
