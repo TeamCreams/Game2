@@ -38,7 +38,7 @@ public class UI_Joystick : UI_Base
 	{
         _touchPosition = eventData.position;
         GetImage((int)Images.Ground).gameObject.transform.position = _touchPosition;
-        Managers.Game.JoystickState = Define.EJoystickState.PointerDown;
+        Event_UI_Joystick.JoystickState = Define.EJoystickState.PointerDown;
     }
     void OnDrag(PointerEventData eventData)
     {
@@ -52,14 +52,14 @@ public class UI_Joystick : UI_Base
         }
         GetImage((int)Images.Lever).transform.position = _touchPosition + moveDir;
 
-        Managers.Game.JoystickAmount = moveDir.normalized * (moveDir.magnitude / leverRange);
-        Managers.Game.JoystickState = Define.EJoystickState.Drag;
+        Event_UI_Joystick.JoystickAmount = moveDir.normalized * (moveDir.magnitude / leverRange);
+        Event_UI_Joystick.JoystickState = Define.EJoystickState.Drag;
     }
     void OnEndDrag(PointerEventData eventData)
     {
         GetImage((int)Images.Lever).gameObject.transform.position = _touchPosition;
-        Managers.Game.JoystickAmount = Vector2.zero;
-        Managers.Game.JoystickState = Define.EJoystickState.PointerUp;
+        Event_UI_Joystick.JoystickAmount = Vector2.zero;
+        Event_UI_Joystick.JoystickState = Define.EJoystickState.PointerUp;
     }
 
     public void JoystickMove()

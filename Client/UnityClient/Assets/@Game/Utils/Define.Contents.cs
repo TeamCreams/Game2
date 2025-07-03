@@ -25,4 +25,22 @@ public static partial class Define
         Die = 3,
     }
 
+    public enum EStatType
+    {
+        Hp,
+        MaxHp,
+        Mp,
+        MaxMp,
+        AttackPower,
+        DefensePower,
+        CriticalChance,
+        CriticalDamage,
+        MovementSpeed,
+        AttackSpeed,
+        SkillPower,
+        SkillCooldownReduction,
+        GoldFind,
+        ExperienceGain,
+    }
+
 }
