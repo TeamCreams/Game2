@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static Define;
 
-public class PlayerController : BaseObject
+public class Player : BaseObject
 {
     private Stats _stats = null;
     private Stats Stats => _stats;
@@ -80,11 +80,16 @@ public class PlayerController : BaseObject
                 break;
         }
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.W))
         {
-            _state = EPlayerState.Die;
-            Debug.Log("Q key was pressed");
+            Ability abilityObj = Managers.Object.Spawn<Ability>(this.transform.position, 0, 10001, this.transform);
         }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+            {
+                _state = EPlayerState.Die;
+                Debug.Log("Q key was pressed");
+            }
     }
 
     #region Update

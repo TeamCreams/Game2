@@ -1,3 +1,4 @@
+using Data;
 using UnityEngine;
 
 public class Bullet : BaseObject
@@ -8,6 +9,7 @@ public class Bullet : BaseObject
     private float _lifeTime = 2f; // 총알 생존 시간 (2초)
     private float _currentTime = 0f;
     private int _id = 0;
+    private DummyData _dummyData;
 
     public override bool Init()
     {
@@ -24,6 +26,7 @@ public class Bullet : BaseObject
             Debug.LogError("Bullet에 Rigidbody 컴포넌트가 없습니다!");
             return false;
         }
+        _dummyData = new DummyData();
 
         return true;
     }
@@ -32,7 +35,19 @@ public class Bullet : BaseObject
     {
 
     }
-    
+    public override void SetInfo(int dataTemplate)
+    {
+        base.SetInfo(dataTemplate);
+        _id = DataTemplateID;
+        _currentTime = 0f;
+        Debug.Log($"Bullet Id : {_id}");
+
+        _speed = _dummyData.BulletDataDict[_id].Speed;
+        _lifeTime = _dummyData.BulletDataDict[_id].LifeTime;
+
+        //dummyData.BulletDataList[_id].Type;
+    }
+
     public void SetDirection(Vector3 direction)
     {
         _direction = direction.normalized;
@@ -61,25 +76,19 @@ public class Bullet : BaseObject
         // 2초가 지나면 총알 제거
         if (_lifeTime <= _currentTime)
         {
-            PushStone(); 
+            PushBullet(); 
         }
     }
-
-    public override void SetInfo(int id)
-    {
-        _id = id;
-        _currentTime = 0f; 
-    }
-
-    private void PushStone()
+    private void PushBullet()
     {
         Managers.Resource.Destroy(this.gameObject);
     }
 
     private void Attack(Collider collision)
     {
-        if (collision.gameObject.GetComponent<EnemyController>() != null)
+        if (collision.gameObject.GetComponent<Enemy>() != null)
         {
+            //dummyData.BulletDataList[_id].Damage;
             Managers.Resource.Destroy(this.gameObject);
         }
     }

@@ -47,6 +47,30 @@ public class ObjectManager
         return obj as T;
     }
 
+    public T Spawn<T>(Vector3 position, int objectId, int templateID, Transform parent) where T : BaseObject
+    {
+        string prefabName = typeof(T).Name;
+
+        GameObject go = Managers.Resource.Instantiate(prefabName, parent, pooling: false);
+        go.name = prefabName;
+        go.transform.position = position;
+
+        BaseObject obj = go.GetComponent<BaseObject>();
+        obj.Clear(); // 풀링되었던 객체들 내부 데이터 초기화
+        obj.SetInfo(templateID);
+
+        if ( 0 == objectId )
+        {
+            objectId = ++_objectIndexer;
+        }
+
+        obj.ObjectId = objectId;
+
+        ObjectDic.Add(objectId, obj);
+
+        return obj as T;
+    }
+
     public void Despawn<T>(T obj) where T : BaseObject
     {
         Managers.Resource.Destroy(obj.gameObject);

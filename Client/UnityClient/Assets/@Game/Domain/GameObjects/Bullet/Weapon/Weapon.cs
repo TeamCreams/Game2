@@ -1,13 +1,15 @@
 using System.Collections;
+using Data;
 using UnityEngine;
 
-public class BulletController : BaseObject
+public class Weapon : BaseObject
 {
     private CharacterController _characterController;
-    private int MaxCount = 5;
-    private float CreatTime = 3.0f;
+    private float _creatTime = 3.0f;
     private Coroutine _spawner = null;
     private bool _isSpawning = false;
+    private int _id = 0;
+    private DummyData _dummyData;
 
     public override bool Init()
     {
@@ -16,6 +18,7 @@ public class BulletController : BaseObject
             return false;
         }
         _characterController = GetComponentInParent<CharacterController>();
+        _dummyData = new DummyData();
         return true;
     }
 
@@ -23,13 +26,16 @@ public class BulletController : BaseObject
     {
         StopSpawning();
     }
-    void Update()
+    public override void SetInfo(int dataTemplate)
     {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            SpawnBullet();
-        }
+        base.SetInfo(dataTemplate);
+        _id = DataTemplateID;
+        Debug.Log($"Weapon Id : {_id}");
+        _creatTime = _dummyData.WeaponDataDict[_id].CoolDown;
+        SpawnBullet();
+        //_dummyData.WeaponDataList[_id].Type;
     }
+
     public void SpawnBullet()
     {
         if (_spawner == null)
@@ -54,7 +60,7 @@ public class BulletController : BaseObject
         while (_isSpawning)
         {
             BulletSpawner();
-            yield return new WaitForSeconds(CreatTime);
+            yield return new WaitForSeconds(_creatTime);
         }
     }
 
@@ -63,9 +69,9 @@ public class BulletController : BaseObject
         // 시간마다
         // 개수
         // 플레이어를 중심으로 5개부터 시작해서 최대 20개까지
-        float angleStep = 360f / MaxCount;
-
-        for (int cnt = 0; cnt < MaxCount; cnt++)
+        int maxCount = _dummyData.WeaponDataDict[_id].Count;
+        float angleStep = 360f / maxCount;
+        for (int cnt = 0; cnt < maxCount; cnt++)
         {
             float currentAngle = cnt * angleStep;
 
@@ -76,24 +82,19 @@ public class BulletController : BaseObject
                 Mathf.Sin(radians)
             );
 
-            Bullet bulletObj = Managers.Object.Spawn<Bullet>(_characterController.transform.position, 0, 0);
+            Bullet bulletObj = Managers.Object.Spawn<Bullet>(_characterController.transform.position, 0, _dummyData.WeaponDataDict[_id].BulletId);
 
             if (bulletObj != null)
             {
+                bulletObj.SetInfo(_dummyData.WeaponDataDict[_id].BulletId);
                 bulletObj.SetDirection(direction);
             }
         }
     }
-
-    public void SetMaxCount(int count)
-    {
-        // 5개에서 20개 사이로 제한
-        MaxCount = Mathf.Clamp(count, 5, 20);
-    }
     
     public void SetCreateTime(float time)
     {
-        CreatTime = Mathf.Max(0.3f, time); // 최소 0.3초
+        _creatTime = Mathf.Max(0.3f, time); // 최소 0.3초
         
         if (_isSpawning)
         {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyController : BaseObject
+public class Enemy : BaseObject
 {
     public override bool Init()
     {

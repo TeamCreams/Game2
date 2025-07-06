@@ -16,7 +16,7 @@ public class FollowCamera : BaseObject
     private Vector3 _velocity = Vector3.zero;
     private Vector3 _lastPlayerPosition;
     private float _idleTimer = 0f;
-    private PlayerController _player;
+    private Player _player;
 
     public override bool Init()
     {
@@ -25,10 +25,10 @@ public class FollowCamera : BaseObject
             return false;
         }
         _camera = GetComponent<Camera>();
-        _player = GetComponentInParent<PlayerController>();
+        _player = GetComponentInParent<Player>();
         if (_player == null)
         {
-            Debug.LogError("Can't find PlayerController.");
+            Debug.LogError("Can't find Player.");
         }
         _lastPlayerPosition = _player.transform.position;
         return true;
