@@ -80,8 +80,8 @@ namespace Data
         private Dictionary<int, WeaponData> _weaponDataDict = new Dictionary<int, WeaponData>()
         {
             { 10101, new WeaponData() { Id = 10101, BulletId = 10201, Type = WeaponData.EType.Missile, Count = 5, CoolDown = 3.5f } },
-            { 10102, new WeaponData() { Id = 10102, BulletId = 10202, Type = WeaponData.EType.Laser, Count = 2, CoolDown = 3.0f } },
-            { 10103, new WeaponData() { Id = 10103, BulletId = 10203, Type = WeaponData.EType.GuidedMissile, Count = 1, CoolDown = 2.0f } },
+            { 10102, new WeaponData() { Id = 10102, BulletId = 10202, Type = WeaponData.EType.Missile, Count = 10, CoolDown = 0.2f } },
+            { 10103, new WeaponData() { Id = 10103, BulletId = 10203, Type = WeaponData.EType.Laser, Count = 1, CoolDown = 3.0f } },
             { 10104, new WeaponData() { Id = 10104, BulletId = 10204, Type = WeaponData.EType.MagneticField, Count = 1, CoolDown = 4.0f } },
         };
 

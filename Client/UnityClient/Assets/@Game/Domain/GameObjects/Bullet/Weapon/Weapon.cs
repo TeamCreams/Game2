@@ -10,13 +10,16 @@ public class Weapon : BaseObject
     private bool _isSpawning = false;
     private int _id = 0;
     private DummyData _dummyData;
-
+    private GameObject _weapon = null;
+    private Vector3 _position = Vector3.zero;
+    private AbilityData.EType _eType;
     public override bool Init()
     {
         if (false == base.Init())
         {
             return false;
         }
+        _weapon = transform.Find("WeaponObj").gameObject;
         _characterController = GetComponentInParent<CharacterController>();
         _dummyData = new DummyData();
         return true;
@@ -35,7 +38,49 @@ public class Weapon : BaseObject
         SpawnBullet();
         //_dummyData.WeaponDataList[_id].Type;
     }
-
+    public void SetAbilityDataEType(AbilityData.EType eType)
+    {
+        _eType = eType;
+        switch (_eType)
+        {
+            case AbilityData.EType.Static:
+                {
+                    _weapon.SetActive(false);
+                }
+                break;
+            case AbilityData.EType.Around:
+                {
+                    _weapon.SetActive(true);
+                }
+                break;
+            case AbilityData.EType.Follow:
+                {
+                    _weapon.SetActive(true);
+                }
+                break;
+        }
+    }
+    public void SetWeaponPosition()
+    {
+        switch (_eType)
+        {
+            case AbilityData.EType.Static:
+                {
+                    _position = _characterController.transform.position;
+                }
+                break;
+            case AbilityData.EType.Around:
+                {
+                    _position = _weapon.transform.position;
+                }
+                break;
+            case AbilityData.EType.Follow:
+                {
+                    _position = _weapon.transform.position;
+                }
+                break;
+        }
+    }
     public void SpawnBullet()
     {
         if (_spawner == null)
@@ -56,7 +101,7 @@ public class Weapon : BaseObject
     IEnumerator BulletSpawnerCor()
     {
         _isSpawning = true;
-        
+
         while (_isSpawning)
         {
             BulletSpawner();
@@ -69,6 +114,7 @@ public class Weapon : BaseObject
         // 시간마다
         // 개수
         // 플레이어를 중심으로 5개부터 시작해서 최대 20개까지
+        SetWeaponPosition(); // 위치 조정
         int maxCount = _dummyData.WeaponDataDict[_id].Count;
         float angleStep = 360f / maxCount;
         for (int cnt = 0; cnt < maxCount; cnt++)
@@ -82,7 +128,7 @@ public class Weapon : BaseObject
                 Mathf.Sin(radians)
             );
 
-            Bullet bulletObj = Managers.Object.Spawn<Bullet>(_characterController.transform.position, 0, _dummyData.WeaponDataDict[_id].BulletId);
+            Bullet bulletObj = Managers.Object.Spawn<Bullet>(_position, 0, _dummyData.WeaponDataDict[_id].BulletId);
 
             if (bulletObj != null)
             {
@@ -91,15 +137,20 @@ public class Weapon : BaseObject
             }
         }
     }
-    
+
     public void SetCreateTime(float time)
     {
         _creatTime = Mathf.Max(0.3f, time); // 최소 0.3초
-        
+
         if (_isSpawning)
         {
             StopSpawning();
             SpawnBullet(); // 새로운 시간으로 재시작
         }
+    }
+
+    private void FollowMoving()
+    {
+
     }
 }
