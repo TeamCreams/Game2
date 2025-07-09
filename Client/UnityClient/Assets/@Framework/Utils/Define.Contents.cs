@@ -8,7 +8,10 @@ public static partial class Define
 
 
     //public enum ESceneType { }
-    public enum EEventType { }
+    public enum EEventType
+    { 
+        SpawnAbillity,
+    }
 
 
 }

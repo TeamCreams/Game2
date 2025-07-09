@@ -36,7 +36,7 @@ public class Player : BaseObject
         }
         _animator = GetComponentInChildren<Animator>();
         _characterController = GetComponent<CharacterController>();
-
+        Managers.Event.AddEvent(EEventType.SpawnAbillity, Event_SpawnAbility);
         return true;
     }
 
@@ -62,7 +62,7 @@ public class Player : BaseObject
 
     private void OnDestroy()
     {
-
+        Managers.Event.RemoveEvent(EEventType.SpawnAbillity, Event_SpawnAbility);
     }
 
     void Update()
@@ -86,10 +86,10 @@ public class Player : BaseObject
         }
 
         if (Input.GetKeyDown(KeyCode.Q))
-            {
-                _state = EPlayerState.Die;
-                Debug.Log("Q key was pressed");
-            }
+        {
+            _state = EPlayerState.Die;
+            Debug.Log("Q key was pressed");
+        }
     }
 
     #region Update
@@ -130,5 +130,13 @@ public class Player : BaseObject
         _animator.SetTrigger("isDie");
     }
 
+    #endregion
+
+    #region Event
+    public void Event_SpawnAbility(Component sender, object param)
+    {
+        int templateId = 10000 + (int)param;
+        Ability abilityObj = Managers.Object.Spawn<Ability>(this.transform.position, 0, templateId, this.transform);
+    }
     #endregion
 }

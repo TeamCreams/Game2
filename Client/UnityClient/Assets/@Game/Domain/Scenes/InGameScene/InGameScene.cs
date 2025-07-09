@@ -23,6 +23,7 @@ public class InGameScene : BaseScene
         {
             if (count == totalCount)
             {
+                Managers.UI.ShowSceneUI<UI_InGameScene>();
                 //Managers.Data.Init();
                 //Managers.Pool.CreatePool(Managers.Resource.Load<GameObject>("Bullet"), 100);
             }
