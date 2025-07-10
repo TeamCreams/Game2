@@ -4,15 +4,15 @@ using System.Runtime.Serialization;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public partial class Systems
+public partial class Contexts
 {
-    private static Systems s_instance;
-    private static Systems Instance { get { Init_Framework(); return s_instance; } }
+    private static Contexts s_instance;
+    private static Contexts Instance { get { Init_Framework(); return s_instance; } }
 
     #region Contents
-    private UserSystem _user = new UserSystem();
+    private UserContext _user = new UserContext();
 
-    public static UserSystem User { get { return Instance?._user; } }
+    public static UserContext User { get { return Instance?._user; } }
     #endregion
 
 
@@ -20,12 +20,12 @@ public partial class Systems
     {
         if (s_instance == null)
         {
-            s_instance = new Systems();
+            s_instance = new Contexts();
 
 
             // 초기화
             s_instance._user.Init();
-            Systems.Init_Game();
+            Contexts.Init_Game();
         }
     }
 

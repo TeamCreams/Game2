@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public partial class UserSystem
+public partial class UserContext
 {
     public string AccessToken { get; private set; }
     public string RefreshToken { get; private set; }

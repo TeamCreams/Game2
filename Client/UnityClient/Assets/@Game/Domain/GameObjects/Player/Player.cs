@@ -9,7 +9,6 @@ public class Player : BaseObject
     private Stats _stats = null;
     private Stats Stats => _stats;
 
-
     private Animator _animator;
     private CharacterController _characterController;
     public Action<EPlayerState, EPlayerState> OnChangedState;

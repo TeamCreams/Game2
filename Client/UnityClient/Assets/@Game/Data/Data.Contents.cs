@@ -94,23 +94,11 @@ namespace Data
         };
 
         // 딕셔너리 접근자 프로퍼티
-        public Dictionary<int, AbilityData> AbilityDataDict
-        {
-            get { return _abilityDataDict; }
-            set { _abilityDataDict = value; }
-        }
+        public IReadOnlyDictionary<int, AbilityData> AbilityDataDict => _abilityDataDict;
 
-        public Dictionary<int, WeaponData> WeaponDataDict
-        {
-            get { return _weaponDataDict; }
-            set { _weaponDataDict = value; }
-        }
+        public IReadOnlyDictionary<int, WeaponData> WeaponDataDict => _weaponDataDict;
 
-        public Dictionary<int, BulletData> BulletDataDict
-        {
-            get { return _bulletDataDict; }
-            set { _bulletDataDict = value; }
-        }
+        public IReadOnlyDictionary<int, BulletData> BulletDataDict => _bulletDataDict;
     }
 
 }
