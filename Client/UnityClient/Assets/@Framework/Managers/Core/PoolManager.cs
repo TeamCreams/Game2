@@ -9,7 +9,7 @@ internal class Pool
 	private IObjectPool<GameObject> _pool;
 
 	private Transform _root;
-	public Transform Root
+	private Transform Root
 	{
 		get
 		{
@@ -23,10 +23,12 @@ internal class Pool
 		}
 	}
 
-	public Pool(GameObject prefab, int defaultCapacity = 10)
+	public Pool(GameObject prefab, PoolOptionsData poolOptionsData)
 	{
 		_prefab = prefab;
-		_pool = new ObjectPool<GameObject>(OnCreate, OnGet, OnRelease, OnDestroy, defaultCapacity: defaultCapacity);
+		//if(poolOptionsData == null)
+		//	poolOptionsData = new PoolOptionsData();
+        _pool = new ObjectPool<GameObject>(OnCreate, OnGet, OnRelease, OnDestroy, defaultCapacity: poolOptionsData.Capacity);
 	}
 
 	public void Push(GameObject go)
@@ -52,11 +54,22 @@ internal class Pool
 	private void OnGet(GameObject go)
 	{
 		go.SetActive(true);
+		var obj = go.GetComponent<BaseObject>();
+		if (obj != null)
+		{
+            obj.OnSpawn();
+        }
 	}
 
 	private void OnRelease(GameObject go)
 	{
 		go.SetActive(false);
+
+		var obj = go.GetComponent<BaseObject>();
+		if (obj != null)
+		{
+			obj.OnDespawn();
+		}
 	}
 
 	private void OnDestroy(GameObject go)
@@ -73,35 +86,33 @@ public class PoolManager
 	public GameObject Pop(GameObject prefab)
 	{
 		if (_pools.ContainsKey(prefab.name) == false)
-            CreatePool(prefab);
+		{
+            PoolOptions poolOptions = prefab.GetComponent<PoolOptions>();
+			PoolOptionsData poolOptionsData = (poolOptions != null) ? poolOptions.Data : new PoolOptionsData();
 
-        return _pools[prefab.name].Pop();
+			CreatePool(prefab, poolOptionsData);
+		}
+
+		return _pools[prefab.name].Pop();
 	}
 
 	public bool Push(GameObject go)
 	{
 		if (_pools.ContainsKey(go.name) == false)
-            return false;
-
-		go.transform.SetParent(_pools[go.name].Root, false);
+			return false;
 
 		_pools[go.name].Push(go);
 		return true;
 	}
-
-	public int Count()
-	{
-		return _pools.Count;
-    }
 
 	public void Clear()
 	{
 		_pools.Clear();
 	}
 
-    public void CreatePool(GameObject original, int defaultCapacity = 10)
+	private void CreatePool(GameObject original, PoolOptionsData poolOptionsData)
 	{
-		Pool pool = new Pool(original, defaultCapacity);
-        _pools.Add(original.name, pool);
-    }
+		Pool pool = new Pool(original, poolOptionsData);
+		_pools.Add(original.name, pool);
+	}
 }

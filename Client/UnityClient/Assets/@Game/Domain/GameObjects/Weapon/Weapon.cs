@@ -19,7 +19,9 @@ public class Weapon : BaseObject
         {
             return false;
         }
-        _weapon = transform.Find("WeaponObj").gameObject;
+        _weapon = Util.FindChild(this.gameObject, "WeaponObj", true);
+        // transform.Find("WeaponObj").gameObject;
+
         _characterController = GetComponentInParent<CharacterController>();
         _dummyData = new DummyData();
         return true;

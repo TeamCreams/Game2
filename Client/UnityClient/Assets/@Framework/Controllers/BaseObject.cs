@@ -1,34 +1,39 @@
 using System;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 
 public partial class BaseObject : InitBase
 {
     public int DataTemplateID { get; set; }
-	public Action<Collider> OnTriggerEnter_Event;
-	public Action<Collider> OnTriggerExit_Event;
 
     public int ObjectId { get; set; }
 
-    protected Collider _collider;
+    protected readonly CompositeDisposable _disposables = new CompositeDisposable();
 
     public override bool Init()
     {
         if (base.Init() == false)
             return false;
 
-        _collider = GetComponent<Collider>();
-        if (_collider == null)
-        {
-            _collider = gameObject.GetComponentInChildren<Collider>();
-        }
-
-        EventBinding();
         return true;
     }
 
-    public virtual void EventBinding()
+    bool _spwanInit = false;
+    public virtual bool OnSpawn()
     {
-        //this.gameObject.BindEvent(TriggerEnter, EGOEvent.TriggerEnter);
+        if (_spwanInit)
+            return false;
+
+        _spwanInit = true;
+
+        return true;
+    }
+
+    public virtual void OnDespawn()
+    {
+        _spwanInit = false;
+        _disposables.Dispose();
     }
 
     public virtual void SetInfo(int dataTemplate)
@@ -38,16 +43,8 @@ public partial class BaseObject : InitBase
 
     public virtual void Clear()
     {
-
-    }
-    public virtual void OnTriggerEnter(Collider collision)
-	{
-		OnTriggerEnter_Event?.Invoke(collision);
-	}
-
-    public virtual void OnTriggerExit(Collider collision)
-    {
-        OnTriggerExit_Event?.Invoke(collision);
+        _init = false;
+        _disposables.Dispose();
     }
 
     #region Static Functions

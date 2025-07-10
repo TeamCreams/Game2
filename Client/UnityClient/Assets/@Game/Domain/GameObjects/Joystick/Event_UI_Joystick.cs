@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UniRx;
 
 public static class Event_UI_Joystick
 {
@@ -7,7 +8,15 @@ public static class Event_UI_Joystick
     #region Action
     public static event Action<(Vector2, float)> OnMoveDirChanged;
 	public static event Action<Define.EJoystickState> OnJoystickStateChanged;
-    public static event Action<Vector2> Joystickstate;
+
+    private static Subject<Vector2> _joystickAmountEvent = new Subject<Vector2>();
+    public static IObservable<Vector2> JoystickAmountEvent => _joystickAmountEvent;
+    public static void ChangeJoystickAmountEvent(Vector2 state)
+    {
+        _joystickAmountEvent.OnNext(state);
+    }
+
+
     #endregion
 
     private static Define.EJoystickState _joystickState;
@@ -28,7 +37,7 @@ public static class Event_UI_Joystick
         set
         {
             _joystickAmount = value;
-            Joystickstate?.Invoke(value);
+            ChangeJoystickAmountEvent(value);
         }
     }
 }

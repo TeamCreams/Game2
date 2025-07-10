@@ -5,12 +5,10 @@ using UnityEngine;
 
 public class Ability : BaseObject
 {
+    AbilityData _info;
     private int _id = 0;
     private DummyData _dummyData;
     
-    // 플레이어 참조
-    private CharacterController _characterController;
-
     // 무기
     private List<Weapon> _weaponList = new List<Weapon>();
     private AbilityData.EType _abilityType;
@@ -25,6 +23,8 @@ public class Ability : BaseObject
     private float _historyDuration = 1.0f; 
     private float _positionUpdateInterval = 0.5f;
     private float _positionUpdateTimer = 0f;
+
+    Transform _ownerTransform = null;
     
     public override bool Init()
     {
@@ -33,9 +33,23 @@ public class Ability : BaseObject
             return false;
         }
         _dummyData = new DummyData();
-        _characterController = GetComponentInParent<CharacterController>();
 
         return true;
+    }
+
+    public override bool OnSpawn()
+    {
+        if (false == base.OnSpawn())
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public void SetOwner(int ownerObjectId)
+    {
+        _ownerTransform = Managers.Object.ObjectDic[ownerObjectId].transform;
     }
     
     private void OnDestroy()
@@ -43,7 +57,7 @@ public class Ability : BaseObject
         _weaponList.Clear();
         _playerPositionHistory.Clear();
     }
-    
+
     public override void SetInfo(int dataTemplate)
     {
         base.SetInfo(dataTemplate);
@@ -59,27 +73,26 @@ public class Ability : BaseObject
         {
             return;
         }
-        
-        _abilityType = _dummyData.AbilityDataDict[_id].Type;
+        _info = _dummyData.AbilityDataDict[_id];
+
+        _abilityType = _info.Type;
         
         SpawnWeapon();
     }
     
     private void SpawnWeapon()
     {
-        var abilityData = _dummyData.AbilityDataDict[_id];
-        
         // 타입에 따른 생성 로직 분기 (C# 9 호환)
-        switch (abilityData.Type)
+        switch (_info.Type)
         {
             case AbilityData.EType.Static:
-                SpawnStaticWeapons(abilityData);
+                SpawnStaticWeapons(_info);
                 break;
             case AbilityData.EType.Follow:
-                SpawnFollowWeapons(abilityData);
+                SpawnFollowWeapons(_info);
                 break;
             case AbilityData.EType.Around:
-                SpawnAroundWeapons(abilityData);
+                SpawnAroundWeapons(_info);
                 break;
         }
     }
@@ -89,7 +102,7 @@ public class Ability : BaseObject
     {
         for (int cnt = 0; cnt < abilityData.Count; cnt++)
         {
-            Vector3 spawnPosition = _characterController != null ? _characterController.transform.position : transform.position;
+            Vector3 spawnPosition = _ownerTransform != null ? _ownerTransform.position : transform.position;
             Weapon weaponObj = Managers.Object.Spawn<Weapon>(spawnPosition, 0, abilityData.WeaponId, this.transform);
             if (weaponObj != null)
             {
@@ -105,7 +118,7 @@ public class Ability : BaseObject
     {
         for (int cnt = 0; cnt < abilityData.Count; cnt++)
         {
-            Vector3 spawnPosition = _characterController != null ? _characterController.transform.position : transform.position;
+            Vector3 spawnPosition = _ownerTransform != null ? _ownerTransform.position : transform.position;
             Weapon weaponObj = Managers.Object.Spawn<Weapon>(spawnPosition, 0, abilityData.WeaponId, this.transform);
             if (weaponObj != null)
             {
@@ -141,24 +154,24 @@ public class Ability : BaseObject
     
     private void InitializePositionHistory()
     {
-        if (_characterController.transform == null) return;
+        if (_ownerTransform== null) return;
         
         int historySize = Mathf.RoundToInt(_historyDuration / _positionUpdateInterval);
     
         for (int i = 0; i < historySize; i++)
         {
-            _playerPositionHistory.Enqueue(_characterController.transform.position);
+            _playerPositionHistory.Enqueue(_ownerTransform.position);
         }
     }
     
     private Vector3 CalculateOrbitPosition(float angle)
     {
-        if (_characterController.transform == null) return transform.position;
+        if (_ownerTransform == null) return transform.position;
 
         float radian = angle * Mathf.Deg2Rad;
         float x = Mathf.Cos(radian) * _orbitRadius;
         float z = Mathf.Sin(radian) * _orbitRadius;
-        return _characterController.transform.position + new Vector3(x, 0, z);
+        return _ownerTransform.position + new Vector3(x, 0, z);
     }
     
     private void LateUpdate() //모든 Update 함수가 호출된 후, 마지막으로 호출
@@ -211,7 +224,7 @@ public class Ability : BaseObject
             Vector3 newPosition = CalculateOrbitPosition(currentAngle);
             _weaponList[i].transform.position = newPosition;
             
-            Vector3 direction = (newPosition - _characterController.transform.position).normalized;
+            Vector3 direction = (newPosition - _ownerTransform.position).normalized;
             if (direction != Vector3.zero)
             {
                 _weaponList[i].transform.rotation = Quaternion.LookRotation(direction);
@@ -232,7 +245,7 @@ public class Ability : BaseObject
             }
             
             // 새로운 위치 추가
-            _playerPositionHistory.Enqueue(_characterController.transform.position);
+            _playerPositionHistory.Enqueue(_ownerTransform.position);
             
             _positionUpdateTimer = 0f;
         }
@@ -243,7 +256,7 @@ public class Ability : BaseObject
     {
         if (_playerPositionHistory.Count == 0)
         {
-            return _characterController.transform.position;
+            return _ownerTransform.position;
         }
         
         return _playerPositionHistory.Peek();

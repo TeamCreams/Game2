@@ -1,4 +1,6 @@
 using Data;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 
 public class Bullet : BaseObject
@@ -17,8 +19,7 @@ public class Bullet : BaseObject
         {
             return false;
         }
-        OnTriggerEnter_Event -= Attack;
-        OnTriggerEnter_Event += Attack;
+
 
         _rigidbody = GetComponent<Rigidbody>();
         if (_rigidbody == null)
@@ -29,6 +30,25 @@ public class Bullet : BaseObject
         _dummyData = new DummyData();
 
         return true;
+    }
+
+    public override bool OnSpawn()
+    {
+        if (false == base.OnSpawn())
+        {
+            return false;
+        }
+
+        this.OnTriggerEnterAsObservable()
+            .Subscribe(collider => Attack(collider))
+            .AddTo(_disposables);
+
+        return true;
+    }
+
+    public override void OnDespawn()
+    {
+        base.OnDespawn();
     }
 
     private void OnDestroy()

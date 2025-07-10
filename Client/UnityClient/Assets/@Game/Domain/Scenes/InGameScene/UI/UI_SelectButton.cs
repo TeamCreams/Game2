@@ -30,6 +30,6 @@ public class UI_SelectButton : UI_Base
     }    
     private void SpawnAbillity()
     {
-        Managers.Event.TriggerEvent(Define.EEventType.SpawnAbillity, this, _id);
+        Contexts.BattleRush.SpawnAbility(_id);
     }
 }

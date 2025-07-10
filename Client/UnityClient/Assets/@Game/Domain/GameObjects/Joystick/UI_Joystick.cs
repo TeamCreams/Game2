@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UniRx;
 
 public class UI_Joystick : UI_Base
 {
@@ -23,6 +24,7 @@ public class UI_Joystick : UI_Base
         {
             return false;
         }
+
         BindImages(typeof(Images));
         //_rectTransform = GetImage((int)Images.Ground).rectTransform;
 

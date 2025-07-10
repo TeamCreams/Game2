@@ -1,3 +1,4 @@
+using UniRx;
 using UnityEngine;
 
 public class InGameScene : BaseScene
@@ -11,8 +12,27 @@ public class InGameScene : BaseScene
             return false;
         }
         StartLoadAssets("PreLoad");
+
+        Event_UI_Joystick.JoystickAmountEvent
+            .Subscribe(dir =>
+            {
+                Debug.Log($"Joystick Changed : {dir.ToString()}");
+                Contexts.BattleRush.PlayerDir = dir;
+            })
+            .AddTo(_disposables);
+
         return true;
     }
+
+    // 리소스 로드후 실행하는 곳
+    public void LateInit()
+    {
+        Managers.UI.ShowSceneUI<UI_InGameScene>();
+
+        var player = Managers.Object.Spawn<Player>(Vector3.zero, 0, 0);
+        Contexts.BattleRush.PlayerObjectId = player.ObjectId;
+    }
+
     public override void Clear()
     {
     }
@@ -23,9 +43,7 @@ public class InGameScene : BaseScene
         {
             if (count == totalCount)
             {
-                Managers.UI.ShowSceneUI<UI_InGameScene>();
-                //Managers.Data.Init();
-                //Managers.Pool.CreatePool(Managers.Resource.Load<GameObject>("Bullet"), 100);
+                this.LateInit();
             }
         });
     }

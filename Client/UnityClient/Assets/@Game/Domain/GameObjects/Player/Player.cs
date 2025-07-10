@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static Define;
 
 public class Player : BaseObject
 {
-    private Stats _stats = null;
+    private Stats _stats = new Stats();
     private Stats Stats => _stats;
 
     private Animator _animator;
@@ -35,9 +37,82 @@ public class Player : BaseObject
         }
         _animator = GetComponentInChildren<Animator>();
         _characterController = GetComponent<CharacterController>();
-        Managers.Event.AddEvent(EEventType.SpawnAbillity, Event_SpawnAbility);
+
         return true;
     }
+
+    public override bool OnSpawn()
+    {
+        if (false == base.OnSpawn())
+        {
+            return false;
+        }
+
+        this.UpdateAsObservable()
+            .Where(_ => _state == EPlayerState.Idle)
+            .Subscribe(_ =>
+            {
+                this.Update_Idle();
+            })
+            .AddTo(_disposables);
+
+        this.UpdateAsObservable()
+            .Where(_ => _state == EPlayerState.Move)
+            .Subscribe(_ =>
+            {
+                this.Update_Move();
+            })
+            .AddTo(_disposables);
+
+        this.UpdateAsObservable()
+            .Where(_ => _state == EPlayerState.Die)
+            .Subscribe(_ =>
+            {
+                this.Update_Die();
+            })
+            .AddTo(_disposables);
+
+        Contexts.BattleRush.SpawnAbilityEvent
+            .Subscribe(abilityId =>
+            {
+                this.Event_SpawnAbility(abilityId);
+            })
+            .AddTo(_disposables);
+
+        this.LateUpdateAsObservable()
+            .Subscribe(_ =>
+            {
+                if (Contexts.BattleRush.PlayerDir.sqrMagnitude < float.Epsilon)
+                {
+                    _state = EPlayerState.Idle;
+                }
+                else
+                {
+                    _state = EPlayerState.Move;
+                }
+            })
+            .AddTo(_disposables);
+
+        //치트키
+        this.UpdateAsObservable()
+            .Subscribe(_ =>
+            {
+                if (Input.GetKeyDown(KeyCode.Q))
+                {
+                    _state = EPlayerState.Die;
+                    Debug.Log("Q key was pressed");
+                }
+            })
+            .AddTo(_disposables);
+
+        return true;
+    }
+
+    public override void OnDespawn()
+    {
+        base.OnDespawn();
+    }
+
 
     public override void SetInfo(int dataTemplate)
     {
@@ -59,64 +134,25 @@ public class Player : BaseObject
         this.Stats.StatDic[EStatType.ExperienceGain] = 0;
     }
 
-    private void OnDestroy()
-    {
-        Managers.Event.RemoveEvent(EEventType.SpawnAbillity, Event_SpawnAbility);
-    }
-
-    void Update()
-    {
-        switch (_state)
-        {
-            case EPlayerState.Idle:
-                Update_Idle();
-                break;
-            case EPlayerState.Move:
-                Update_Move();
-                break;
-            case EPlayerState.Die:
-                Update_Die();
-                break;
-        }
-
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            Ability abilityObj = Managers.Object.Spawn<Ability>(this.transform.position, 0, 10001, this.transform);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            _state = EPlayerState.Die;
-            Debug.Log("Q key was pressed");
-        }
-    }
 
     #region Update
     private void Update_Idle()
     {
-        if (Event_UI_Joystick.JoystickState == EJoystickState.PointerDown)
-        {
-            this.State = EPlayerState.Move;
-        }
     }
 
     private void Update_Move()
     {
-        if (Event_UI_Joystick.JoystickState == EJoystickState.PointerUp)
-        {
-            this.State = EPlayerState.Idle;
-        }
-        _currentMoveSpeed = Mathf.Clamp01(Event_UI_Joystick.JoystickAmount.magnitude);
+        _currentMoveSpeed = Mathf.Clamp01(Contexts.BattleRush.PlayerDir.magnitude);
         _animator.SetFloat("MoveSpeed", Mathf.Abs(_currentMoveSpeed));
-        _animator.SetFloat("MoveDirectionX", Event_UI_Joystick.JoystickAmount.x);
-        _animator.SetFloat("MoveDirectionY", Event_UI_Joystick.JoystickAmount.y);
+        _animator.SetFloat("MoveDirectionX", Contexts.BattleRush.PlayerDir.x);
+        _animator.SetFloat("MoveDirectionY", Contexts.BattleRush.PlayerDir.y);
 
-        Vector3 motion = new Vector3(Event_UI_Joystick.JoystickAmount.x, 0, Event_UI_Joystick.JoystickAmount.y);
+        Vector3 motion = new Vector3(Contexts.BattleRush.PlayerDir.x, 0, Contexts.BattleRush.PlayerDir.y);
         _characterController.Move(motion * Time.deltaTime * 5);
         //_characterController.Move(motion * Time.deltaTime * this._stats.StatDic[EStatType.MovementSpeed]);
 
         Transform animationTransform = _animator.gameObject.transform;
-        Vector3 moveDirection = new Vector3(Event_UI_Joystick.JoystickAmount.x, 0, Event_UI_Joystick.JoystickAmount.y);
+        Vector3 moveDirection = new Vector3(Contexts.BattleRush.PlayerDir.x, 0, Contexts.BattleRush.PlayerDir.y);
         if (0.1f < moveDirection.magnitude)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
@@ -132,10 +168,11 @@ public class Player : BaseObject
     #endregion
 
     #region Event
-    public void Event_SpawnAbility(Component sender, object param)
+    public void Event_SpawnAbility(int abilityId)
     {
-        int templateId = 10000 + (int)param;
+        int templateId = 10000 + (int)abilityId;
         Ability abilityObj = Managers.Object.Spawn<Ability>(this.transform.position, 0, templateId, this.transform);
+        abilityObj.SetOwner(this.ObjectId);
     }
     #endregion
 }

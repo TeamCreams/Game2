@@ -32,7 +32,7 @@ public class ObjectManager
         go.transform.position = position;
 
         BaseObject obj = go.GetComponent<BaseObject>();
-        obj.Clear(); // 풀링되었던 객체들 내부 데이터 초기화
+        obj.Init();
         obj.SetInfo(templateID);
 
         if ( 0 == objectId )
