@@ -23,8 +23,8 @@ public class Ability : BaseObject
     // Follow 변수들
     private Queue<Vector3> _playerPositionHistory = new Queue<Vector3>(); 
     private float _historyDuration = 1.0f; 
-    private float _positionUpdateInterval = 0.1f;
-    private float _lastPositionUpdateTime = 0f;
+    private float _positionUpdateInterval = 0.5f;
+    private float _positionUpdateTimer = 0f;
     
     public override bool Init()
     {
@@ -161,7 +161,7 @@ public class Ability : BaseObject
         return _characterController.transform.position + new Vector3(x, 0, z);
     }
     
-    private void Update()
+    private void LateUpdate() //모든 Update 함수가 호출된 후, 마지막으로 호출
     {
         switch (_abilityType)
         {
@@ -174,7 +174,7 @@ public class Ability : BaseObject
         }
     }
    
-    private void UpdateFollowWeapons()
+    private void UpdateFollowWeapons() 
     {
         UpdatePositionHistory();
         
@@ -185,11 +185,7 @@ public class Ability : BaseObject
         {
             if (weapon != null)
             {
-                // 부드러운 이동 (옵션 1: 즉시 이동)
-                weapon.transform.position = targetPosition;
-                
-                // 부드러운 이동 (옵션 2: 보간 이동)
-                // weapon.transform.position = Vector3.Lerp(weapon.transform.position, targetPosition, Time.deltaTime * 5f);
+                weapon.transform.position = Vector3.Lerp(weapon.transform.position, targetPosition, Time.deltaTime * 5f);
             }
         }
     }
@@ -200,7 +196,7 @@ public class Ability : BaseObject
         if (_weaponList.Count == 0) return;
         
         _currentRotationAngle += _rotationSpeed * Time.deltaTime;
-        if (_currentRotationAngle >= 360f)
+        if (360 <= _currentRotationAngle)
         {
             _currentRotationAngle -= 360f;
         }
@@ -209,7 +205,7 @@ public class Ability : BaseObject
         {
             if (_weaponList[i] == null) continue;
             
-            float baseAngle = (360f / _weaponList.Count) * i;
+            float baseAngle = (float)(360 / _weaponList.Count) * i;
             float currentAngle = baseAngle + _currentRotationAngle;
             
             Vector3 newPosition = CalculateOrbitPosition(currentAngle);
@@ -225,7 +221,9 @@ public class Ability : BaseObject
     
     private void UpdatePositionHistory()
     {
-        if (Time.time - _lastPositionUpdateTime >= _positionUpdateInterval)
+        _positionUpdateTimer += Time.deltaTime;
+    
+        if (_positionUpdateInterval <= _positionUpdateTimer)
         {
             // 오래된 위치 제거
             if ((int)(_historyDuration / _positionUpdateInterval) <= _playerPositionHistory.Count)
@@ -235,7 +233,8 @@ public class Ability : BaseObject
             
             // 새로운 위치 추가
             _playerPositionHistory.Enqueue(_characterController.transform.position);
-            _lastPositionUpdateTime = Time.time;
+            
+            _positionUpdateTimer = 0f;
         }
     }
     
@@ -248,21 +247,6 @@ public class Ability : BaseObject
         }
         
         return _playerPositionHistory.Peek();
-    }
-    
-    public void SetRotationSpeed(float speed)
-    {
-        _rotationSpeed = speed;
-    }
-    
-    public void SetOrbitRadius(float radius)
-    {
-        _orbitRadius = radius;
-    }
-    
-    public void SetHistoryDuration(float duration)
-    {
-        _historyDuration = duration;
     }
     
     private void PushAbility()
