@@ -11,7 +11,7 @@ public class Bullet : BaseObject
     private float _lifeTime = 2f; // 총알 생존 시간 (2초)
     private float _currentTime = 0f;
     private int _id = 0;
-    private DummyData _dummyData;
+    private BulletData _info;
 
     public override bool Init()
     {
@@ -27,7 +27,6 @@ public class Bullet : BaseObject
             Debug.LogError("Bullet에 Rigidbody 컴포넌트가 없습니다!");
             return false;
         }
-        _dummyData = new DummyData();
 
         return true;
     }
@@ -61,9 +60,10 @@ public class Bullet : BaseObject
         _id = DataTemplateID;
         _currentTime = 0f;
         Debug.Log($"Bullet Id : {_id}");
-
-        _speed = _dummyData.BulletDataDict[_id].Speed;
-        _lifeTime = _dummyData.BulletDataDict[_id].LifeTime;
+        DummyData dummy = new DummyData();
+        _info = dummy.BulletDataDict[_id];
+        _speed = _info.Speed;
+        _lifeTime = _info.LifeTime;
 
         //dummyData.BulletDataList[_id].Type;
     }

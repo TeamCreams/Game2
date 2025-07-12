@@ -7,11 +7,9 @@ public class Ability : BaseObject
 {
     AbilityData _info;
     private int _id = 0;
-    private DummyData _dummyData;
     
     // 무기
     private List<Weapon> _weaponList = new List<Weapon>();
-    private AbilityData.EType _abilityType;
     
     // Around 변수들
     private float _rotationSpeed = 50f; 
@@ -25,6 +23,7 @@ public class Ability : BaseObject
     private float _positionUpdateTimer = 0f;
 
     Transform _ownerTransform = null;
+    private int _ownerObjectId = 0;
     
     public override bool Init()
     {
@@ -32,7 +31,6 @@ public class Ability : BaseObject
         {
             return false;
         }
-        _dummyData = new DummyData();
 
         return true;
     }
@@ -49,6 +47,7 @@ public class Ability : BaseObject
 
     public void SetOwner(int ownerObjectId)
     {
+        _ownerObjectId = ownerObjectId;
         _ownerTransform = Managers.Object.ObjectDic[ownerObjectId].transform;
     }
     
@@ -68,14 +67,8 @@ public class Ability : BaseObject
         {
             return;
         }
-
-        if (!_dummyData.AbilityDataDict.ContainsKey(_id))
-        {
-            return;
-        }
-        _info = _dummyData.AbilityDataDict[_id];
-
-        _abilityType = _info.Type;
+        DummyData dummy = new DummyData();
+        _info =  dummy.AbilityDataDict[_id];
         
         SpawnWeapon();
     }
@@ -107,6 +100,7 @@ public class Ability : BaseObject
             if (weaponObj != null)
             {
                 weaponObj.SetInfo(abilityData.WeaponId);
+                weaponObj.SetOwner(_ownerObjectId);
                 weaponObj.SetAbilityDataEType(abilityData.Type);
                 _weaponList.Add(weaponObj);
             }
@@ -123,6 +117,7 @@ public class Ability : BaseObject
             if (weaponObj != null)
             {
                 weaponObj.SetInfo(abilityData.WeaponId);
+                weaponObj.SetOwner(_ownerObjectId);
                 weaponObj.SetAbilityDataEType(abilityData.Type);
                 _weaponList.Add(weaponObj);
             }
@@ -146,6 +141,7 @@ public class Ability : BaseObject
             if (weaponObj != null)
             {
                 weaponObj.SetInfo(abilityData.WeaponId);
+                weaponObj.SetOwner(_ownerObjectId);
                 weaponObj.SetAbilityDataEType(abilityData.Type);
                 _weaponList.Add(weaponObj);
             }
@@ -176,7 +172,7 @@ public class Ability : BaseObject
     
     private void LateUpdate() //모든 Update 함수가 호출된 후, 마지막으로 호출
     {
-        switch (_abilityType)
+        switch (_info.Type)
         {
             case AbilityData.EType.Follow:
                 UpdateFollowWeapons();

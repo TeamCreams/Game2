@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Weapon : BaseObject
 {
-    private CharacterController _characterController;
+    Transform _ownerTransform = null;
     private float _creatTime = 3.0f;
     private Coroutine _spawner = null;
     private bool _isSpawning = false;
     private int _id = 0;
-    private DummyData _dummyData;
+    private WeaponData _info;
     private GameObject _weapon = null;
     private Vector3 _position = Vector3.zero;
     private AbilityData.EType _eType;
@@ -20,10 +20,6 @@ public class Weapon : BaseObject
             return false;
         }
         _weapon = Util.FindChild(this.gameObject, "WeaponObj", true);
-        // transform.Find("WeaponObj").gameObject;
-
-        _characterController = GetComponentInParent<CharacterController>();
-        _dummyData = new DummyData();
         return true;
     }
 
@@ -31,12 +27,19 @@ public class Weapon : BaseObject
     {
         StopSpawning();
     }
+
+    public void SetOwner(int ownerObjectId)
+    {
+        _ownerTransform = Managers.Object.ObjectDic[ownerObjectId].transform;
+    }
     public override void SetInfo(int dataTemplate)
     {
         base.SetInfo(dataTemplate);
         _id = DataTemplateID;
         Debug.Log($"Weapon Id : {_id}");
-        _creatTime = _dummyData.WeaponDataDict[_id].CoolDown;
+        DummyData dummy = new DummyData();
+        _info = dummy.WeaponDataDict[_id];
+        _creatTime = _info.CoolDown;
         SpawnBullet();
         //_dummyData.WeaponDataList[_id].Type;
     }
@@ -68,7 +71,7 @@ public class Weapon : BaseObject
         {
             case AbilityData.EType.Static:
                 {
-                    _position = _characterController.transform.position;
+                    _position = _ownerTransform.position;
                 }
                 break;
             case AbilityData.EType.Around:
@@ -117,7 +120,7 @@ public class Weapon : BaseObject
         // 개수
         // 플레이어를 중심으로 5개부터 시작해서 최대 20개까지
         SetWeaponPosition(); // 위치 조정
-        int maxCount = _dummyData.WeaponDataDict[_id].Count;
+        int maxCount = _info.Count;
         float angleStep = 360f / maxCount;
         for (int cnt = 0; cnt < maxCount; cnt++)
         {
@@ -130,11 +133,11 @@ public class Weapon : BaseObject
                 Mathf.Sin(radians)
             );
 
-            Bullet bulletObj = Managers.Object.Spawn<Bullet>(_position, 0, _dummyData.WeaponDataDict[_id].BulletId);
+            Bullet bulletObj = Managers.Object.Spawn<Bullet>(_position, 0, _info.BulletId);
 
             if (bulletObj != null)
             {
-                bulletObj.SetInfo(_dummyData.WeaponDataDict[_id].BulletId);
+                bulletObj.SetInfo(_info.BulletId);
                 bulletObj.SetDirection(direction);
             }
         }

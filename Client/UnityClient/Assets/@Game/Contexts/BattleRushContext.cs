@@ -15,4 +15,18 @@ public partial class BattleRushContext
         _spawnAbilityEvent.OnNext(abilityId);
     }
 
+    private Subject<int> _spawnWeaponEvent = new Subject<int>();
+    public IObservable<int> SpawnWeaponEvent => _spawnWeaponEvent;
+    public void SpawnWeapon(int weaponId)
+    {
+        _spawnWeaponEvent.OnNext(weaponId);
+    }
+
+    private Subject<int> _spawnBulletEvent = new Subject<int>();
+    public IObservable<int> SpawnBulletEvent => _spawnBulletEvent;
+    public void SpawnBullet(int bulletId)
+    {
+        _spawnBulletEvent.OnNext(bulletId);
+    }
+
 }
