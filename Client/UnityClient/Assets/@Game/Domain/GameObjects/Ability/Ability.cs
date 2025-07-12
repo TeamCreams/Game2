@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Data;
 using UnityEngine;
+using UniRx;
 
 public class Ability : BaseObject
 {
@@ -41,20 +42,26 @@ public class Ability : BaseObject
         {
             return false;
         }
-
+        Contexts.BattleRush.SpawnWeaponEvent
+            .Subscribe(weaponId =>
+            {
+                SpawnWeapon();
+            })
+            .AddTo(_disposables);
         return true;
+    }
+
+    public override void OnDespawn()
+    {
+        base.OnDespawn();
+        _weaponList.Clear();
+        _playerPositionHistory.Clear();
     }
 
     public void SetOwner(int ownerObjectId)
     {
         _ownerObjectId = ownerObjectId;
         _ownerTransform = Managers.Object.ObjectDic[ownerObjectId].transform;
-    }
-    
-    private void OnDestroy()
-    {
-        _weaponList.Clear();
-        _playerPositionHistory.Clear();
     }
 
     public override void SetInfo(int dataTemplate)
@@ -70,7 +77,7 @@ public class Ability : BaseObject
         DummyData dummy = new DummyData();
         _info =  dummy.AbilityDataDict[_id];
         
-        SpawnWeapon();
+        //SpawnWeapon();
     }
     
     private void SpawnWeapon()

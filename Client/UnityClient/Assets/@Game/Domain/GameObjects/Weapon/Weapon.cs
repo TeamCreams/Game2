@@ -1,18 +1,18 @@
 using System.Collections;
 using Data;
 using UnityEngine;
-
+using UniRx;
+using System;
 public class Weapon : BaseObject
 {
     Transform _ownerTransform = null;
     private float _creatTime = 3.0f;
-    private Coroutine _spawner = null;
-    private bool _isSpawning = false;
     private int _id = 0;
     private WeaponData _info;
     private GameObject _weapon = null;
     private Vector3 _position = Vector3.zero;
     private AbilityData.EType _eType;
+    
     public override bool Init()
     {
         if (false == base.Init())
@@ -22,12 +22,6 @@ public class Weapon : BaseObject
         _weapon = Util.FindChild(this.gameObject, "WeaponObj", true);
         return true;
     }
-
-    private void OnDestroy()
-    {
-        StopSpawning();
-    }
-
     public void SetOwner(int ownerObjectId)
     {
         _ownerTransform = Managers.Object.ObjectDic[ownerObjectId].transform;
@@ -40,8 +34,29 @@ public class Weapon : BaseObject
         DummyData dummy = new DummyData();
         _info = dummy.WeaponDataDict[_id];
         _creatTime = _info.CoolDown;
-        SpawnBullet();
+        
         //_dummyData.WeaponDataList[_id].Type;
+    }
+    public override bool OnSpawn()
+    {
+        if (false == base.OnSpawn())
+        {
+            return false;
+        }
+
+        Contexts.BattleRush.SpawnBulletEvent
+        .ThrottleFirst(TimeSpan.FromSeconds(_creatTime)) 
+        .Subscribe(bulletId =>
+        {
+            this.Event_SpawnBullet(bulletId);
+        })
+        .AddTo(this);
+    
+        return true;
+    }
+    public override void OnDespawn()
+    {
+        base.OnDespawn();
     }
     public void SetAbilityDataEType(AbilityData.EType eType)
     {
@@ -86,35 +101,7 @@ public class Weapon : BaseObject
                 break;
         }
     }
-    public void SpawnBullet()
-    {
-        if (_spawner == null)
-        {
-            _spawner = StartCoroutine(BulletSpawnerCor());
-        }
-    }
-
-    public void StopSpawning()
-    {
-        if (_spawner != null)
-        {
-            StopCoroutine(_spawner);
-            _spawner = null;
-        }
-        _isSpawning = false;
-    }
-    IEnumerator BulletSpawnerCor()
-    {
-        _isSpawning = true;
-
-        while (_isSpawning)
-        {
-            BulletSpawner();
-            yield return new WaitForSeconds(_creatTime);
-        }
-    }
-
-    private void BulletSpawner()
+    private void Event_SpawnBullet(int bulletId)
     {
         // 시간마다
         // 개수
@@ -143,19 +130,4 @@ public class Weapon : BaseObject
         }
     }
 
-    public void SetCreateTime(float time)
-    {
-        _creatTime = Mathf.Max(0.3f, time); // 최소 0.3초
-
-        if (_isSpawning)
-        {
-            StopSpawning();
-            SpawnBullet(); // 새로운 시간으로 재시작
-        }
-    }
-
-    private void FollowMoving()
-    {
-
-    }
 }

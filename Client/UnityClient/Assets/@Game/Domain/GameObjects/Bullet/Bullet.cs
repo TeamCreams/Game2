@@ -24,7 +24,7 @@ public class Bullet : BaseObject
         _rigidbody = GetComponent<Rigidbody>();
         if (_rigidbody == null)
         {
-            Debug.LogError("Bullet에 Rigidbody 컴포넌트가 없습니다!");
+            Debug.LogError("Rigidbody not Exist!");
             return false;
         }
 
@@ -50,10 +50,6 @@ public class Bullet : BaseObject
         base.OnDespawn();
     }
 
-    private void OnDestroy()
-    {
-
-    }
     public override void SetInfo(int dataTemplate)
     {
         base.SetInfo(dataTemplate);
@@ -65,7 +61,6 @@ public class Bullet : BaseObject
         _speed = _info.Speed;
         _lifeTime = _info.LifeTime;
 
-        //dummyData.BulletDataList[_id].Type;
     }
 
     public void SetDirection(Vector3 direction)
