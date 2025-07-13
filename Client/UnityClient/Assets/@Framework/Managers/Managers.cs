@@ -7,9 +7,11 @@ public class Managers : MonoBehaviour
     #region Contents
     private GameManager _game = new GameManager();
     private ObjectManager _object = new ObjectManager();
+    private EnemyManager _enemy = new EnemyManager();
 
     public static GameManager Game { get { return Instance?._game; } }
     public static ObjectManager Object { get { return Instance?._object; } }
+    public static EnemyManager Enemy { get { return Instance?._enemy; } }
     #endregion
 
     #region Core

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ public partial class BattleRushContext
 {
     public Vector2 PlayerDir { get; set; }
     public int? PlayerObjectId { get; set; } = null;
+    public List<int> EnemyObjectIdList { get; set; }
 
 
     private Subject<int> _spawnAbilityEvent = new Subject<int>();

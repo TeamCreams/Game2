@@ -12,7 +12,8 @@ public class Weapon : BaseObject
     private GameObject _weapon = null;
     private Vector3 _position = Vector3.zero;
     private AbilityData.EType _eType;
-    
+    private bool _isSetting = false;
+
     public override bool Init()
     {
         if (false == base.Init())
@@ -34,7 +35,7 @@ public class Weapon : BaseObject
         DummyData dummy = new DummyData();
         _info = dummy.WeaponDataDict[_id];
         _creatTime = _info.CoolDown;
-        
+
         //_dummyData.WeaponDataList[_id].Type;
     }
     public override bool OnSpawn()
@@ -45,13 +46,14 @@ public class Weapon : BaseObject
         }
 
         Contexts.BattleRush.SpawnBulletEvent
-        .ThrottleFirst(TimeSpan.FromSeconds(_creatTime)) 
+        //(_isSetting == true)
+        .ThrottleFirst(TimeSpan.FromSeconds(_creatTime))
         .Subscribe(bulletId =>
         {
             this.Event_SpawnBullet(bulletId);
         })
         .AddTo(this);
-    
+
         return true;
     }
     public override void OnDespawn()
@@ -129,5 +131,50 @@ public class Weapon : BaseObject
             }
         }
     }
+
+    private void SpawnWeapon()
+    {
+        // 타입에 따른 생성 로직 분기 (C# 9 호환)
+        switch (_info.Type)
+        {
+            case WeaponData.EType.Missile:
+                SpawnMissileBullets(_info);
+                break;
+            case WeaponData.EType.GuidedMissile:
+                SpawnGuidedMissileBullets(_info);
+                break;
+            case WeaponData.EType.MagneticField:
+                SpawnMagneticFieldBullets(_info);
+                break;
+            case WeaponData.EType.Laser:
+                SpawnLaserBullets(_info);
+                break;
+        }
+    }
+
+    private void SpawnMissileBullets(WeaponData weaponData)
+    {
+        _isSetting = true;
+        // 피젯스피너에서 나오는 총알은 lifetime을 짧게
+        Event_SpawnBullet(weaponData.BulletId);
+    }
+    private void SpawnGuidedMissileBullets(WeaponData weaponData)
+    {
+        _isSetting = true;
+        // 인근에 있는 적 transform을 추적.
+        Transform target = Managers.Enemy.GetNearestEnemy(_ownerTransform.position);
+        //target을 총알에 있는 스크립트로 넘기기
+    }
+    private void SpawnMagneticFieldBullets(WeaponData weaponData)
+    {
+        _isSetting = true;
+        // 총알은 lifetime을 짧게
+    }
+    private void SpawnLaserBullets(WeaponData weaponData)
+    {
+        _isSetting = true;
+
+    }
+    
 
 }
