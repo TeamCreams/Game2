@@ -60,8 +60,8 @@ public class Bullet : BaseObject
         _info = dummy.BulletDataDict[_id];
         _speed = _info.Speed;
         _lifeTime = _info.LifeTime;
-
     }
+
 
     public void SetDirection(Vector3 direction)
     {
@@ -69,13 +69,11 @@ public class Bullet : BaseObject
     }
 
     private void FixedUpdate()
-    {
-        MoveBullet();
-        
+    {   
         CheckLifeTime();
     }
 
-    private void MoveBullet()
+    public void MoveBullet()
     {
         if (_rigidbody != null && _direction != Vector3.zero)
         {
@@ -83,15 +81,24 @@ public class Bullet : BaseObject
             _rigidbody.MovePosition(newPosition);
         }
     }
+    public void MoveToTargetBullet(Transform target)
+    {
+        if (_rigidbody != null && _direction != Vector3.zero)
+        {
+            Vector3 directionToTarget = (target.position - transform.position).normalized;
+            Vector3 newPosition = transform.position + directionToTarget * _speed * Time.fixedDeltaTime;
+            _rigidbody.MovePosition(newPosition);
+        }
+    }
 
     private void CheckLifeTime()
     {
         _currentTime += Time.fixedDeltaTime;
-        
+
         // 2초가 지나면 총알 제거
         if (_lifeTime <= _currentTime)
         {
-            PushBullet(); 
+            PushBullet();
         }
     }
     private void PushBullet()
