@@ -2,10 +2,13 @@ using Data;
 using UnityEngine;
 public partial class Weapon
 {
-    
-    private void SpawnLaserBullets(WeaponData weaponData)
+    private void Event_SpawnLaserBullets()
     {
-        _isSetting = true;
+        Debug.Log("Event_SpawnLaserBullets");
+
+    }
+    private void SpawnLaserBullets()
+    {
 
     }
 }

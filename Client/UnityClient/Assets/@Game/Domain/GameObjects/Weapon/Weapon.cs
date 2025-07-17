@@ -13,6 +13,7 @@ public partial class Weapon : BaseObject
     private Vector3 _position = Vector3.zero;
     private AbilityData.EType _eType;
     private bool _isSetting = false;
+    System.IDisposable _lifeTimer;
 
     public override bool Init()
     {
@@ -21,12 +22,40 @@ public partial class Weapon : BaseObject
             return false;
         }
         _weapon = Util.FindChild(this.gameObject, "WeaponObj", true);
+
+
+        _lifeTimer?.Dispose();
+        
+        _lifeTimer = Observable.Timer(TimeSpan.FromSeconds(_creatTime))//뭔가 시간이 이상함?
+            .Where(_ => _isSetting == true)
+            .Subscribe(_ =>
+            {                
+                switch (_info.Type)
+                {
+                    case WeaponData.EType.Missile:
+                        SpawnMissileBullets();
+                        break;
+                    case WeaponData.EType.GuidedMissile:
+                        SpawnGuidedMissileBullets();
+                        break;
+                    case WeaponData.EType.MagneticField:
+                        SpawnMagneticFieldBullets();
+                        break;
+                    case WeaponData.EType.Laser:
+                        SpawnLaserBullets();
+                        break;
+                }
+            }).AddTo(this.gameObject);
         return true;
     }
+    
+    
     public void SetOwner(int ownerObjectId)
     {
         Debug.Log($"Weapon / ownerObjectId : {ownerObjectId}");
         _ownerTransform = Managers.Object.ObjectDic[ownerObjectId].transform;
+        
+        _isSetting = true;
     }
     public override void SetInfo(int dataTemplate)
     {
@@ -46,20 +75,15 @@ public partial class Weapon : BaseObject
             return false;
         }
 
-        Contexts.BattleRush.SpawnBulletEvent
-        .Where(_ => _isSetting == true)
-        .ThrottleFirst(TimeSpan.FromSeconds(_creatTime))
-        .Subscribe(bulletId =>
-        {
-            this.Event_SpawnMissile(bulletId);
-        })
-        .AddTo(this);
 
         return true;
     }
     public override void OnDespawn()
     {
         base.OnDespawn();
+        // 타이머 중지 및 리소스 정리
+        _lifeTimer?.Dispose();
+        _lifeTimer = null;
     }
     public void SetAbilityDataEType(AbilityData.EType eType)
     {
@@ -110,16 +134,16 @@ public partial class Weapon : BaseObject
         switch (_info.Type)
         {
             case WeaponData.EType.Missile:
-                SpawnMissileBullets(_info);
+                SpawnMissileBullets();
                 break;
             case WeaponData.EType.GuidedMissile:
-                SpawnGuidedMissileBullets(_info);
+                SpawnGuidedMissileBullets();
                 break;
             case WeaponData.EType.MagneticField:
-                SpawnMagneticFieldBullets(_info);
+                SpawnMagneticFieldBullets();
                 break;
             case WeaponData.EType.Laser:
-                SpawnLaserBullets(_info);
+                SpawnLaserBullets();
                 break;
         }
     }

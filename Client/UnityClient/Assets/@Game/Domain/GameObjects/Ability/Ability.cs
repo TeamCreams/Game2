@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Data;
 using UnityEngine;
 using UniRx;
+using System;
 
 public partial class Ability : BaseObject
 {
@@ -22,6 +23,7 @@ public partial class Ability : BaseObject
     private float _historyDuration = 1.0f; 
     private float _positionUpdateInterval = 0.5f;
     private float _positionUpdateTimer = 0f;
+    System.IDisposable _lifeTimer;
 
     Transform _ownerTransform = null;
     private int _ownerObjectId = 0;
@@ -32,6 +34,32 @@ public partial class Ability : BaseObject
         {
             return false;
         }
+        // Contexts.BattleRush.SpawnWeaponEvent
+        //     .Subscribe(weaponId =>
+        //     {
+        //         Debug.Log("SpawnWeapon");
+        //         SpawnWeapon();
+        //     })
+        //     .AddTo(_disposables);
+        _lifeTimer?.Dispose();
+
+        _lifeTimer = Observable.Interval(TimeSpan.FromSeconds(0.3f)) //뭔가 시간이 이상함?
+            .Subscribe(_ =>
+            {
+                Debug.Log("UpdateFollowWeapons");
+                if (_info == null)
+                    return;
+                switch (_info.Type)
+                    {
+                        case AbilityData.EType.Follow:
+                            UpdateFollowWeapons();
+                            break;
+                        case AbilityData.EType.Around:
+                            UpdateAroundWeapons();
+                            break;
+                    }
+            }).AddTo(this.gameObject); //_disposable로 하면 안됨
+
         return true;
     }
 
@@ -41,13 +69,7 @@ public partial class Ability : BaseObject
         {
             return false;
         }
-        // Contexts.BattleRush.SpawnWeaponEvent
-        //     .Subscribe(weaponId =>
-        //     {
-        //         Debug.Log("SpawnWeapon");
-        //         SpawnWeapon();
-        //     })
-        //     .AddTo(_disposables);
+        
         return true;
     }
 
@@ -56,6 +78,9 @@ public partial class Ability : BaseObject
         base.OnDespawn();
         _weaponList.Clear();
         _playerPositionHistory.Clear();
+        // 타이머 중지 및 리소스 정리
+        _lifeTimer?.Dispose();
+        _lifeTimer = null;
     }
 
     public void SetOwner(int ownerObjectId)
@@ -63,7 +88,7 @@ public partial class Ability : BaseObject
         Debug.Log($"ownerObjectId : {ownerObjectId}");
         _ownerObjectId = ownerObjectId;
         _ownerTransform = Managers.Object.ObjectDic[ownerObjectId].transform;
-
+        
         SpawnWeapon();
     }
 
@@ -83,32 +108,31 @@ public partial class Ability : BaseObject
     
     private void SpawnWeapon()
     {
-        // 타입에 따른 생성 로직 분기 (C# 9 호환)
         switch (_info.Type)
         {
             case AbilityData.EType.Static:
-                SpawnStaticWeapons(_info);
+                SpawnStaticWeapons();
                 break;
             case AbilityData.EType.Follow:
-                SpawnFollowWeapons(_info);
+                SpawnFollowWeapons();
                 break;
             case AbilityData.EType.Around:
-                SpawnAroundWeapons(_info);
+                SpawnAroundWeapons();
                 break;
         }
     }
     
-    private void LateUpdate() //모든 Update 함수가 호출된 후, 마지막으로 호출
-    {
-        switch (_info.Type)
-        {
-            case AbilityData.EType.Follow:
-                UpdateFollowWeapons();
-                break;
-            case AbilityData.EType.Around:
-                UpdateAroundWeapons();
-                break;
-        }
-    }
+    // private void LateUpdate() //모든 Update 함수가 호출된 후, 마지막으로 호출
+    // {
+    //     switch (_info.Type)
+    //     {
+    //         case AbilityData.EType.Follow:
+    //             UpdateFollowWeapons();
+    //             break;
+    //         case AbilityData.EType.Around:
+    //             UpdateAroundWeapons();
+    //             break;
+    //     }
+    // }
     
 }

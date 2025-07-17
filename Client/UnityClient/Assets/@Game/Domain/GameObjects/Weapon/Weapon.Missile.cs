@@ -2,11 +2,12 @@ using Data;
 using UnityEngine;
 public partial class Weapon
 {
-    private void Event_SpawnMissile(int bulletId)
+    private void Event_SpawnMissile()
     {
         // 시간마다
         // 개수
         // 플레이어를 중심으로 5개부터 시작해서 최대 20개까지
+        Debug.Log("Event_SpawnMissile");
         SetWeaponPosition(); // 위치 조정
         int maxCount = _info.Count;
         float angleStep = 360f / maxCount;
@@ -30,11 +31,10 @@ public partial class Weapon
             }
         }
     }
-    private void SpawnMissileBullets(WeaponData weaponData)
+    private void SpawnMissileBullets()
     {
-        _isSetting = true;
         // 피젯스피너에서 나오는 총알은 lifetime을 짧게
-        Event_SpawnMissile(weaponData.BulletId);
+        Event_SpawnMissile();
     }
     
 }

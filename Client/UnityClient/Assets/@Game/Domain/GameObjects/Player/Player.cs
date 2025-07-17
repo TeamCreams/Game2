@@ -53,8 +53,14 @@ public class Player : BaseObject
                     _state = EPlayerState.Die;
                     Debug.Log("Q key was pressed");
                 }
+                if (Input.GetKeyDown(KeyCode.W))
+                {
+                    Debug.Log("W key was pressed");
+                    Contexts.BattleRush.SpawnWeapon(10101);
+                }
             })
             .AddTo(_disposables);
+
         return true;
     }
 
@@ -69,6 +75,8 @@ public class Player : BaseObject
             .Where(_ => _state == EPlayerState.Idle)
             .Subscribe(_ =>
             {
+                //Debug.Log("Idle");
+
                 this.Update_Idle();
             })
             .AddTo(_disposables);
@@ -77,6 +85,8 @@ public class Player : BaseObject
             .Where(_ => _state == EPlayerState.Move)
             .Subscribe(_ =>
             {
+                //Debug.Log("Move");
+
                 this.Update_Move();
             })
             .AddTo(_disposables);
@@ -170,41 +180,13 @@ public class Player : BaseObject
 
     #region Event
     public void Event_SpawnAbility(int abilityId)
-{
-    Debug.Log($"Event_SpawnAbility / PlayerObjectId : {Contexts.BattleRush.PlayerObjectId}");
-    
-    try
     {
-        // 1. PlayerObjectId.Value 확인
+        Debug.Log($"Event_SpawnAbility / PlayerObjectId : {Contexts.BattleRush.PlayerObjectId}");
+        
         int playerObjectId = Contexts.BattleRush.PlayerObjectId.Value;
-        Debug.Log($"PlayerObjectId.Value: {playerObjectId}");
-        
-        // 2. templateId 확인
         int templateId = 10000 + (int)abilityId;
-        Debug.Log($"templateId: {templateId}");
-        
-        // 3. Spawn 시도
-        Debug.Log("About to spawn Ability...");
         Ability abilityObj = Managers.Object.Spawn<Ability>(this.transform.position, 0, templateId, this.transform);
-        
-        // 4. Spawn 결과 확인
-        if (abilityObj == null)
-        {
-            Debug.LogError("abilityObj is null!");
-            return;
-        }
-        Debug.Log("Ability spawned successfully!");
-        
-        // 5. SetOwner 호출
-        Debug.Log($"Calling SetOwner with: {playerObjectId}");
         abilityObj.SetOwner(playerObjectId);
-        Debug.Log("SetOwner called successfully!");
     }
-    catch (System.Exception e)
-    {
-        Debug.LogError($"Exception in Event_SpawnAbility: {e.Message}");
-        Debug.LogError($"Stack trace: {e.StackTrace}");
-    }
-}
     #endregion
 }
