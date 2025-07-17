@@ -30,12 +30,10 @@ public class InGameScene : BaseScene
         Managers.UI.ShowSceneUI<UI_InGameScene>();
 
         var player = Managers.Object.Spawn<Player>(Vector3.zero, 0, 0);
-        Debug.Log($"Player spawned - ObjectId: {player.ObjectId}");
-        Debug.Log($"ObjectDic contains player: {Managers.Object.ObjectDic.ContainsKey(player.ObjectId)}");
-        Debug.Log($"ObjectDic count: {Managers.Object.ObjectDic.Count}");
-        
+
+        var followCamera = Managers.Object.Spawn<FreeLookCamera>(Vector3.zero, 0, 0);
+
         Contexts.BattleRush.PlayerObjectId = player.ObjectId;
-        Debug.Log($"Context PlayerObjectId set to: {Contexts.BattleRush.PlayerObjectId}");
 
     }
 

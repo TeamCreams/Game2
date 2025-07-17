@@ -60,6 +60,7 @@ public class Bullet : BaseObject
         _info = dummy.BulletDataDict[_id];
         _speed = _info.Speed;
         _lifeTime = _info.LifeTime;
+
     }
 
 
@@ -69,8 +70,9 @@ public class Bullet : BaseObject
     }
 
     private void FixedUpdate()
-    {   
+    {
         CheckLifeTime();
+        MoveBullet();
     }
 
     public void MoveBullet()
@@ -89,6 +91,10 @@ public class Bullet : BaseObject
             Vector3 newPosition = transform.position + directionToTarget * _speed * Time.fixedDeltaTime;
             _rigidbody.MovePosition(newPosition);
         }
+    }
+    private void UpdateLaserBullets()
+    {
+        
     }
 
     private void CheckLifeTime()
