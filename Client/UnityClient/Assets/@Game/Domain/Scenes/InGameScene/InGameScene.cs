@@ -16,7 +16,7 @@ public class InGameScene : BaseScene
         Event_UI_Joystick.JoystickAmountEvent
             .Subscribe(dir =>
             {
-                Debug.Log($"Joystick Changed : {dir.ToString()}");
+                //Debug.Log($"Joystick Changed : {dir.ToString()}");
                 Contexts.BattleRush.PlayerDir = dir;
             })
             .AddTo(_disposables);
@@ -30,7 +30,13 @@ public class InGameScene : BaseScene
         Managers.UI.ShowSceneUI<UI_InGameScene>();
 
         var player = Managers.Object.Spawn<Player>(Vector3.zero, 0, 0);
+        Debug.Log($"Player spawned - ObjectId: {player.ObjectId}");
+        Debug.Log($"ObjectDic contains player: {Managers.Object.ObjectDic.ContainsKey(player.ObjectId)}");
+        Debug.Log($"ObjectDic count: {Managers.Object.ObjectDic.Count}");
+        
         Contexts.BattleRush.PlayerObjectId = player.ObjectId;
+        Debug.Log($"Context PlayerObjectId set to: {Contexts.BattleRush.PlayerObjectId}");
+
     }
 
     public override void Clear()

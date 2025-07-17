@@ -23,11 +23,10 @@ public partial class Weapon
 
             Transform target = Managers.Enemy.GetNearestEnemy(_ownerTransform.position);
             Bullet bulletObj = Managers.Object.Spawn<Bullet>(_position, 0, _info.BulletId);
-            bulletObj.MoveToTargetBullet(target);
             if (bulletObj != null)
             {
                 bulletObj.SetInfo(_info.BulletId);
-                bulletObj.SetDirection(direction);
+                bulletObj.MoveToTargetBullet(target);
             }
         }
     }

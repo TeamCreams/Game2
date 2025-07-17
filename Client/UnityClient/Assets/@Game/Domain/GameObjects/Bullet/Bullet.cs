@@ -38,9 +38,9 @@ public class Bullet : BaseObject
             return false;
         }
 
-        this.OnTriggerEnterAsObservable()
-            .Subscribe(collider => Attack(collider))
-            .AddTo(_disposables);
+        // this.OnTriggerEnterAsObservable()
+        //     .Subscribe(collider => Attack(collider))
+        //     .AddTo(_disposables);
 
         return true;
     }
@@ -106,12 +106,12 @@ public class Bullet : BaseObject
         Managers.Resource.Destroy(this.gameObject);
     }
 
-    private void Attack(Collider collision)
-    {
-        if (collision.gameObject.GetComponent<Enemy>() != null)
-        {
-            //dummyData.BulletDataList[_id].Damage;
-            Managers.Resource.Destroy(this.gameObject);
-        }
-    }
+    // private void Attack(Collider collision)
+    // {
+    //     if (collision.gameObject.GetComponent<Enemy>() != null)
+    //     {
+    //         //dummyData.BulletDataList[_id].Damage;
+    //         Managers.Resource.Destroy(this.gameObject);
+    //     }
+    // }
 }

@@ -25,6 +25,7 @@ public partial class Weapon : BaseObject
     }
     public void SetOwner(int ownerObjectId)
     {
+        Debug.Log($"Weapon / ownerObjectId : {ownerObjectId}");
         _ownerTransform = Managers.Object.ObjectDic[ownerObjectId].transform;
     }
     public override void SetInfo(int dataTemplate)

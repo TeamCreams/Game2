@@ -38,6 +38,23 @@ public class Player : BaseObject
         _animator = GetComponentInChildren<Animator>();
         _characterController = GetComponent<CharacterController>();
 
+        Contexts.BattleRush.SpawnAbilityEvent
+            .Subscribe(abilityId =>
+            {
+                this.Event_SpawnAbility(abilityId);
+            })
+            .AddTo(_disposables);
+        //치트키
+        this.UpdateAsObservable()
+            .Subscribe(_ =>
+            {
+                if (Input.GetKeyDown(KeyCode.Q))
+                {
+                    _state = EPlayerState.Die;
+                    Debug.Log("Q key was pressed");
+                }
+            })
+            .AddTo(_disposables);
         return true;
     }
 
@@ -72,12 +89,7 @@ public class Player : BaseObject
             })
             .AddTo(_disposables);
 
-        Contexts.BattleRush.SpawnAbilityEvent
-            .Subscribe(abilityId =>
-            {
-                this.Event_SpawnAbility(abilityId);
-            })
-            .AddTo(_disposables);
+        
 
         this.LateUpdateAsObservable()
             .Subscribe(_ =>
@@ -93,17 +105,6 @@ public class Player : BaseObject
             })
             .AddTo(_disposables);
 
-        //치트키
-        this.UpdateAsObservable()
-            .Subscribe(_ =>
-            {
-                if (Input.GetKeyDown(KeyCode.Q))
-                {
-                    _state = EPlayerState.Die;
-                    Debug.Log("Q key was pressed");
-                }
-            })
-            .AddTo(_disposables);
 
         return true;
     }
@@ -169,10 +170,41 @@ public class Player : BaseObject
 
     #region Event
     public void Event_SpawnAbility(int abilityId)
+{
+    Debug.Log($"Event_SpawnAbility / PlayerObjectId : {Contexts.BattleRush.PlayerObjectId}");
+    
+    try
     {
+        // 1. PlayerObjectId.Value 확인
+        int playerObjectId = Contexts.BattleRush.PlayerObjectId.Value;
+        Debug.Log($"PlayerObjectId.Value: {playerObjectId}");
+        
+        // 2. templateId 확인
         int templateId = 10000 + (int)abilityId;
+        Debug.Log($"templateId: {templateId}");
+        
+        // 3. Spawn 시도
+        Debug.Log("About to spawn Ability...");
         Ability abilityObj = Managers.Object.Spawn<Ability>(this.transform.position, 0, templateId, this.transform);
-        abilityObj.SetOwner(this.ObjectId);
+        
+        // 4. Spawn 결과 확인
+        if (abilityObj == null)
+        {
+            Debug.LogError("abilityObj is null!");
+            return;
+        }
+        Debug.Log("Ability spawned successfully!");
+        
+        // 5. SetOwner 호출
+        Debug.Log($"Calling SetOwner with: {playerObjectId}");
+        abilityObj.SetOwner(playerObjectId);
+        Debug.Log("SetOwner called successfully!");
     }
+    catch (System.Exception e)
+    {
+        Debug.LogError($"Exception in Event_SpawnAbility: {e.Message}");
+        Debug.LogError($"Stack trace: {e.StackTrace}");
+    }
+}
     #endregion
 }

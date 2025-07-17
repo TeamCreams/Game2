@@ -7,6 +7,8 @@ public partial class Ability
     {
         for (int cnt = 0; cnt < abilityData.Count; cnt++)
         {
+            Debug.Log("SpawnFollowWeapons" + cnt);
+
             Vector3 spawnPosition = _ownerTransform != null ? _ownerTransform.position : transform.position;
             Weapon weaponObj = Managers.Object.Spawn<Weapon>(spawnPosition, 0, abilityData.WeaponId, this.transform);
             if (weaponObj != null)

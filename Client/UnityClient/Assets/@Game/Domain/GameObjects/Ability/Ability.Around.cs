@@ -5,6 +5,8 @@ public partial class Ability
     // Around
     private void SpawnAroundWeapons(AbilityData abilityData)
     {
+        Debug.Log("SpawnAroundWeapons");
+
         float angleStep = 360f / abilityData.Count;
 
         for (int cnt = 0; cnt < abilityData.Count; cnt++)
@@ -15,6 +17,7 @@ public partial class Ability
             Weapon weaponObj = Managers.Object.Spawn<Weapon>(spawnPosition, 0, abilityData.WeaponId, this.transform);
             if (weaponObj != null)
             {
+
                 weaponObj.SetInfo(abilityData.WeaponId);
                 weaponObj.SetOwner(_ownerObjectId);
                 weaponObj.SetAbilityDataEType(abilityData.Type);

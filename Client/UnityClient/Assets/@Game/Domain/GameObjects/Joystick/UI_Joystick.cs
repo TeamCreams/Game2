@@ -28,7 +28,7 @@ public class UI_Joystick : UI_Base
         BindImages(typeof(Images));
         //_rectTransform = GetImage((int)Images.Ground).rectTransform;
 
-        Debug.Log(this.GetImage((int)Images.BlockingImage));
+        //Debug.Log(this.GetImage((int)Images.BlockingImage));
 
         this.GetImage((int)Images.BlockingImage).gameObject.BindEvent(OnBeginDrag, Define.EUIEvent.PointerDown);
         this.Get<Image>((int)Images.BlockingImage).gameObject.BindEvent(OnDrag, Define.EUIEvent.Drag);

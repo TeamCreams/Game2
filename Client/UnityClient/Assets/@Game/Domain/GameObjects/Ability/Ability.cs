@@ -32,7 +32,6 @@ public partial class Ability : BaseObject
         {
             return false;
         }
-
         return true;
     }
 
@@ -42,12 +41,13 @@ public partial class Ability : BaseObject
         {
             return false;
         }
-        Contexts.BattleRush.SpawnWeaponEvent
-            .Subscribe(weaponId =>
-            {
-                SpawnWeapon();
-            })
-            .AddTo(_disposables);
+        // Contexts.BattleRush.SpawnWeaponEvent
+        //     .Subscribe(weaponId =>
+        //     {
+        //         Debug.Log("SpawnWeapon");
+        //         SpawnWeapon();
+        //     })
+        //     .AddTo(_disposables);
         return true;
     }
 
@@ -60,8 +60,11 @@ public partial class Ability : BaseObject
 
     public void SetOwner(int ownerObjectId)
     {
+        Debug.Log($"ownerObjectId : {ownerObjectId}");
         _ownerObjectId = ownerObjectId;
         _ownerTransform = Managers.Object.ObjectDic[ownerObjectId].transform;
+
+        SpawnWeapon();
     }
 
     public override void SetInfo(int dataTemplate)
@@ -76,8 +79,6 @@ public partial class Ability : BaseObject
         }
         DummyData dummy = new DummyData();
         _info =  dummy.AbilityDataDict[_id];
-        
-        //SpawnWeapon();
     }
     
     private void SpawnWeapon()
