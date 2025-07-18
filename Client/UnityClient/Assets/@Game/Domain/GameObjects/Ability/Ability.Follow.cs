@@ -13,7 +13,6 @@ public partial class Ability
             Weapon weaponObj = Managers.Object.Spawn<Weapon>(spawnPosition, 0, _info.WeaponId, this.transform);
             if (weaponObj != null)
             {
-                weaponObj.SetInfo(_info.WeaponId);
                 weaponObj.SetOwner(_ownerObjectId);
                 weaponObj.SetAbilityDataEType(_info.Type);
                 _weaponList.Add(weaponObj);

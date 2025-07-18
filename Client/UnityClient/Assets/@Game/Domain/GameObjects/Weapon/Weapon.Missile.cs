@@ -10,6 +10,7 @@ public partial class Weapon
         Debug.Log("Event_SpawnMissile");
         SetWeaponPosition(); // 위치 조정
         int maxCount = _info.Count;
+        
         float angleStep = 360f / maxCount;
         for (int cnt = 0; cnt < maxCount; cnt++)
         {

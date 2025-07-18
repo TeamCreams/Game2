@@ -11,6 +11,7 @@ public class FreeLookCamera : BaseObject
     public float _zoomLerpSpeed = 2f;
     public float _idleTimeToZoomOut = 5f;
 
+    [SerializeField]
     private Transform _player;
     private CinemachineCamera _camera;
     public override bool Init()
@@ -37,7 +38,7 @@ public class FreeLookCamera : BaseObject
         _camera.Follow = _player;
         _camera.UpdateTargetCache();
     }
-private void SetTargetWithNewStruct()
+    private void SetTargetWithNewStruct()
     {
         
     }

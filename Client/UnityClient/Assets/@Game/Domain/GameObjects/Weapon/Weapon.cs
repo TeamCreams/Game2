@@ -3,6 +3,8 @@ using Data;
 using UnityEngine;
 using UniRx;
 using System;
+using System.Runtime.CompilerServices;
+
 public partial class Weapon : BaseObject
 {
     Transform _ownerTransform = null;
@@ -14,6 +16,9 @@ public partial class Weapon : BaseObject
     private AbilityData.EType _eType;
     private bool _isSetting = false;
     System.IDisposable _lifeTimer;
+    
+    //int WeaponId
+    public Subject<Unit> OnSpawnBullet { get; private set; } = new Subject<Unit>();
 
     public override bool Init()
     {
@@ -23,29 +28,6 @@ public partial class Weapon : BaseObject
         }
         _weapon = Util.FindChild(this.gameObject, "WeaponObj", true);
 
-
-        _lifeTimer?.Dispose();
-        
-        _lifeTimer = Observable.Timer(TimeSpan.FromSeconds(_creatTime))//뭔가 시간이 이상함?
-            .Where(_ => _isSetting == true)
-            .Subscribe(_ =>
-            {                
-                switch (_info.Type)
-                {
-                    case WeaponData.EType.Missile:
-                        SpawnMissileBullets();
-                        break;
-                    case WeaponData.EType.GuidedMissile:
-                        SpawnGuidedMissileBullets();
-                        break;
-                    case WeaponData.EType.MagneticField:
-                        SpawnMagneticFieldBullets();
-                        break;
-                    case WeaponData.EType.Laser:
-                        SpawnLaserBullets();
-                        break;
-                }
-            }).AddTo(this.gameObject);
         return true;
     }
     
@@ -65,25 +47,51 @@ public partial class Weapon : BaseObject
         DummyData dummy = new DummyData();
         _info = dummy.WeaponDataDict[_id];
         _creatTime = _info.CoolDown;
+        Debug.Log("SetInfo");
 
         //_dummyData.WeaponDataList[_id].Type;
     }
     public override bool OnSpawn()
     {
+        Debug.Log("OnSpawn");
         if (false == base.OnSpawn())
         {
             return false;
         }
+        Observable.Interval(TimeSpan.FromSeconds(_creatTime))//뭔가 시간이 이상함?
+            //.Where(_ => _isSetting == true)
+            .Subscribe(_ =>
+            {
+                OnSpawnBullet?.OnNext(Unit.Default);
+            }).AddTo(this);
 
+        OnSpawnBullet
+            .Subscribe(_ =>
+            {
+                Debug.Log("Shoot");
+                switch (_info.Type)
+                {
+                    case WeaponData.EType.Missile:
+                        SpawnMissileBullets();
+                        break;
+                    case WeaponData.EType.GuidedMissile:
+                        SpawnGuidedMissileBullets();
+                        break;
+                    case WeaponData.EType.MagneticField:
+                        SpawnMagneticFieldBullets();
+                        break;
+                    case WeaponData.EType.Laser:
+                        SpawnLaserBullets();
+                        break;
+                }
+            })
+            .AddTo(_disposables);
 
         return true;
     }
     public override void OnDespawn()
     {
         base.OnDespawn();
-        // 타이머 중지 및 리소스 정리
-        _lifeTimer?.Dispose();
-        _lifeTimer = null;
     }
     public void SetAbilityDataEType(AbilityData.EType eType)
     {

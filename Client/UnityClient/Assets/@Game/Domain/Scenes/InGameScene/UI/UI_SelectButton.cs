@@ -30,6 +30,7 @@ public class UI_SelectButton : UI_Base
     }    
     private void SpawnAbillity()
     {
-        Contexts.BattleRush.SpawnAbility(_id);
+        Contexts.BattleRush.OnClickSpawnAbilityButton?.OnNext(_id);
+        //Contexts.BattleRush.SpawnAbility(_id);
     }
 }

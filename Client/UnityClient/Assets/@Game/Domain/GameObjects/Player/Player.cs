@@ -29,6 +29,9 @@ public class Player : BaseObject
     }
     private List<StatModifier> _statModifier;
     private float _currentMoveSpeed;
+    
+    public Subject<int> OnSpawnAbility { get; private set; } = new Subject<int>();
+    
     public override bool Init()
     {
         if (false == base.Init())
@@ -38,12 +41,24 @@ public class Player : BaseObject
         _animator = GetComponentInChildren<Animator>();
         _characterController = GetComponent<CharacterController>();
 
-        Contexts.BattleRush.SpawnAbilityEvent
+
+        return true;
+    }
+
+    public override bool OnSpawn()
+    {
+        if (false == base.OnSpawn())
+        {
+            return false;
+        }
+        
+        OnSpawnAbility
             .Subscribe(abilityId =>
             {
                 this.Event_SpawnAbility(abilityId);
             })
             .AddTo(_disposables);
+        
         //치트키
         this.UpdateAsObservable()
             .Subscribe(_ =>
@@ -60,16 +75,6 @@ public class Player : BaseObject
                 }
             })
             .AddTo(_disposables);
-
-        return true;
-    }
-
-    public override bool OnSpawn()
-    {
-        if (false == base.OnSpawn())
-        {
-            return false;
-        }
 
         this.UpdateAsObservable()
             .Where(_ => _state == EPlayerState.Idle)

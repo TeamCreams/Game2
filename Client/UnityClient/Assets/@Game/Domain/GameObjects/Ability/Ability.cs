@@ -4,6 +4,7 @@ using Data;
 using UnityEngine;
 using UniRx;
 using System;
+using UniRx.Triggers;
 
 public partial class Ability : BaseObject
 {
@@ -28,38 +29,19 @@ public partial class Ability : BaseObject
     Transform _ownerTransform = null;
     private int _ownerObjectId = 0;
     
+    Dictionary<AbilityData.EType, Action> _callbacks = new Dictionary<AbilityData.EType, Action>();
+    
     public override bool Init()
     {
         if (false == base.Init())
         {
             return false;
         }
-        // Contexts.BattleRush.SpawnWeaponEvent
-        //     .Subscribe(weaponId =>
-        //     {
-        //         Debug.Log("SpawnWeapon");
-        //         SpawnWeapon();
-        //     })
-        //     .AddTo(_disposables);
-        _lifeTimer?.Dispose();
 
-        _lifeTimer = Observable.Interval(TimeSpan.FromSeconds(0.3f)) //뭔가 시간이 이상함?
-            .Subscribe(_ =>
-            {
-                Debug.Log("UpdateFollowWeapons");
-                if (_info == null)
-                    return;
-                switch (_info.Type)
-                    {
-                        case AbilityData.EType.Follow:
-                            UpdateFollowWeapons();
-                            break;
-                        case AbilityData.EType.Around:
-                            UpdateAroundWeapons();
-                            break;
-                    }
-            }).AddTo(this.gameObject); //_disposable로 하면 안됨
-
+        _callbacks[AbilityData.EType.Follow] = UpdateFollowWeapons;
+        _callbacks[AbilityData.EType.Around] = UpdateAroundWeapons;
+        _callbacks[AbilityData.EType.Static] = null;
+        
         return true;
     }
 
@@ -70,6 +52,16 @@ public partial class Ability : BaseObject
             return false;
         }
         
+        this.UpdateAsObservable()
+            .Subscribe(_ =>
+            {
+                if (_info == null)
+                    return;
+                
+                _callbacks[_info.Type]?.Invoke();
+            }).AddTo(_disposables);
+
+        
         return true;
     }
 
@@ -78,9 +70,6 @@ public partial class Ability : BaseObject
         base.OnDespawn();
         _weaponList.Clear();
         _playerPositionHistory.Clear();
-        // 타이머 중지 및 리소스 정리
-        _lifeTimer?.Dispose();
-        _lifeTimer = null;
     }
 
     public void SetOwner(int ownerObjectId)
