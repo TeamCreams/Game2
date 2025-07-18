@@ -21,6 +21,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 25cc557f6892a4e099e388fea2150a10
+    m_Address: FreeLookCamera
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c47e96da34e3d4ad4b40af1e1f16427f
     m_Address: Ability
     m_ReadOnly: 0

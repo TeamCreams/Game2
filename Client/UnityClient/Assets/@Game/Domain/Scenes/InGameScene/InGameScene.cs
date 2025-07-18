@@ -1,9 +1,11 @@
+using System;
 using UniRx;
 using UnityEngine;
 
 public class InGameScene : BaseScene
 {
     UI_Joystick _joyStick = null;
+    Player _player = null;
 
     public override bool Init()
     {
@@ -16,8 +18,17 @@ public class InGameScene : BaseScene
         Event_UI_Joystick.JoystickAmountEvent
             .Subscribe(dir =>
             {
-                Debug.Log($"Joystick Changed : {dir.ToString()}");
+                //Debug.Log($"Joystick Changed : {dir.ToString()}");
                 Contexts.BattleRush.PlayerDir = dir;
+            })
+            .AddTo(_disposables);
+
+        Contexts.BattleRush.OnClickSpawnAbilityButton
+            .Subscribe(abilityId =>
+            {
+                if (_player == null) return;
+                
+                _player.OnSpawnAbility?.OnNext(abilityId);
             })
             .AddTo(_disposables);
 
@@ -29,8 +40,13 @@ public class InGameScene : BaseScene
     {
         Managers.UI.ShowSceneUI<UI_InGameScene>();
 
-        var player = Managers.Object.Spawn<Player>(Vector3.zero, 0, 0);
-        Contexts.BattleRush.PlayerObjectId = player.ObjectId;
+        _player = Managers.Object.Spawn<Player>(Vector3.zero, 0, 0);
+
+        var followCamera = Managers.Object.Spawn<FreeLookCamera>(Vector3.zero, 0, 0);
+    
+        Contexts.BattleRush.PlayerObjectId = _player.ObjectId;
+        followCamera.SetTarget();
+
     }
 
     public override void Clear()

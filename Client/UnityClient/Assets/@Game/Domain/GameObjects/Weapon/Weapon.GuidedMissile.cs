@@ -2,11 +2,10 @@ using Data;
 using UnityEngine;
 public partial class Weapon
 {
-    private void Event_SpawnGuidedMissile(int bulletId)
+    private void Event_SpawnGuidedMissile()
     {
-        // 시간마다
-        // 개수
-        // 플레이어를 중심으로 5개부터 시작해서 최대 20개까지
+        Debug.Log("Event_SpawnGuidedMissile");
+
         SetWeaponPosition(); // 위치 조정
         int maxCount = _info.Count;
         float angleStep = 360f / maxCount;
@@ -23,18 +22,16 @@ public partial class Weapon
 
             Transform target = Managers.Enemy.GetNearestEnemy(_ownerTransform.position);
             Bullet bulletObj = Managers.Object.Spawn<Bullet>(_position, 0, _info.BulletId);
-            bulletObj.MoveToTargetBullet(target);
             if (bulletObj != null)
             {
                 bulletObj.SetInfo(_info.BulletId);
-                bulletObj.SetDirection(direction);
+                bulletObj.MoveToTargetBullet(target);
             }
         }
     }
 
-    private void SpawnGuidedMissileBullets(WeaponData weaponData)
+    private void SpawnGuidedMissileBullets()
     {
-        _isSetting = true;
-        Event_SpawnGuidedMissile(weaponData.BulletId);
+        Event_SpawnGuidedMissile();
     }
 }

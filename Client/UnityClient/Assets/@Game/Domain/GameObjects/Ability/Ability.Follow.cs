@@ -3,17 +3,18 @@ using UnityEngine;
 public partial class Ability
 {
     // Follow
-    private void SpawnFollowWeapons(AbilityData abilityData)
+    private void SpawnFollowWeapons()
     {
-        for (int cnt = 0; cnt < abilityData.Count; cnt++)
+        for (int cnt = 0; cnt < _info.Count; cnt++)
         {
+            Debug.Log("SpawnFollowWeapons" + cnt);
+
             Vector3 spawnPosition = _ownerTransform != null ? _ownerTransform.position : transform.position;
-            Weapon weaponObj = Managers.Object.Spawn<Weapon>(spawnPosition, 0, abilityData.WeaponId, this.transform);
+            Weapon weaponObj = Managers.Object.Spawn<Weapon>(spawnPosition, 0, _info.WeaponId, this.transform);
             if (weaponObj != null)
             {
-                weaponObj.SetInfo(abilityData.WeaponId);
                 weaponObj.SetOwner(_ownerObjectId);
-                weaponObj.SetAbilityDataEType(abilityData.Type);
+                weaponObj.SetAbilityDataEType(_info.Type);
                 _weaponList.Add(weaponObj);
             }
         }

@@ -3,21 +3,24 @@ using UnityEngine;
 public partial class Ability
 {
     // Around
-    private void SpawnAroundWeapons(AbilityData abilityData)
+    private void SpawnAroundWeapons()
     {
-        float angleStep = 360f / abilityData.Count;
+        Debug.Log("SpawnAroundWeapons");
 
-        for (int cnt = 0; cnt < abilityData.Count; cnt++)
+        float angleStep = 360f / _info.Count;
+
+        for (int cnt = 0; cnt < _info.Count; cnt++)
         {
             float angle = cnt * angleStep;
             Vector3 spawnPosition = CalculateOrbitPosition(angle);
 
-            Weapon weaponObj = Managers.Object.Spawn<Weapon>(spawnPosition, 0, abilityData.WeaponId, this.transform);
+            Weapon weaponObj = Managers.Object.Spawn<Weapon>(spawnPosition, 0, _info.WeaponId, this.transform);
             if (weaponObj != null)
             {
-                weaponObj.SetInfo(abilityData.WeaponId);
+
+                weaponObj.SetInfo(_info.WeaponId);
                 weaponObj.SetOwner(_ownerObjectId);
-                weaponObj.SetAbilityDataEType(abilityData.Type);
+                weaponObj.SetAbilityDataEType(_info.Type);
                 _weaponList.Add(weaponObj);
             }
         }

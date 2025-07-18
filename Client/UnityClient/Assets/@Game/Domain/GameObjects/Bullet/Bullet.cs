@@ -38,9 +38,9 @@ public class Bullet : BaseObject
             return false;
         }
 
-        this.OnTriggerEnterAsObservable()
-            .Subscribe(collider => Attack(collider))
-            .AddTo(_disposables);
+        // this.OnTriggerEnterAsObservable()
+        //     .Subscribe(collider => Attack(collider))
+        //     .AddTo(_disposables);
 
         return true;
     }
@@ -60,6 +60,7 @@ public class Bullet : BaseObject
         _info = dummy.BulletDataDict[_id];
         _speed = _info.Speed;
         _lifeTime = _info.LifeTime;
+
     }
 
 
@@ -69,8 +70,9 @@ public class Bullet : BaseObject
     }
 
     private void FixedUpdate()
-    {   
+    {
         CheckLifeTime();
+        MoveBullet();
     }
 
     public void MoveBullet()
@@ -90,6 +92,10 @@ public class Bullet : BaseObject
             _rigidbody.MovePosition(newPosition);
         }
     }
+    private void UpdateLaserBullets()
+    {
+        
+    }
 
     private void CheckLifeTime()
     {
@@ -106,12 +112,12 @@ public class Bullet : BaseObject
         Managers.Resource.Destroy(this.gameObject);
     }
 
-    private void Attack(Collider collision)
-    {
-        if (collision.gameObject.GetComponent<Enemy>() != null)
-        {
-            //dummyData.BulletDataList[_id].Damage;
-            Managers.Resource.Destroy(this.gameObject);
-        }
-    }
+    // private void Attack(Collider collision)
+    // {
+    //     if (collision.gameObject.GetComponent<Enemy>() != null)
+    //     {
+    //         //dummyData.BulletDataList[_id].Damage;
+    //         Managers.Resource.Destroy(this.gameObject);
+    //     }
+    // }
 }

@@ -29,6 +29,9 @@ public class Player : BaseObject
     }
     private List<StatModifier> _statModifier;
     private float _currentMoveSpeed;
+    
+    public Subject<int> OnSpawnAbility { get; private set; } = new Subject<int>();
+    
     public override bool Init()
     {
         if (false == base.Init())
@@ -37,6 +40,7 @@ public class Player : BaseObject
         }
         _animator = GetComponentInChildren<Animator>();
         _characterController = GetComponent<CharacterController>();
+
 
         return true;
     }
@@ -47,11 +51,37 @@ public class Player : BaseObject
         {
             return false;
         }
+        
+        OnSpawnAbility
+            .Subscribe(abilityId =>
+            {
+                this.Event_SpawnAbility(abilityId);
+            })
+            .AddTo(_disposables);
+        
+        //치트키
+        this.UpdateAsObservable()
+            .Subscribe(_ =>
+            {
+                if (Input.GetKeyDown(KeyCode.Q))
+                {
+                    _state = EPlayerState.Die;
+                    Debug.Log("Q key was pressed");
+                }
+                if (Input.GetKeyDown(KeyCode.W))
+                {
+                    Debug.Log("W key was pressed");
+                    Contexts.BattleRush.SpawnWeapon(10101);
+                }
+            })
+            .AddTo(_disposables);
 
         this.UpdateAsObservable()
             .Where(_ => _state == EPlayerState.Idle)
             .Subscribe(_ =>
             {
+                //Debug.Log("Idle");
+
                 this.Update_Idle();
             })
             .AddTo(_disposables);
@@ -60,6 +90,8 @@ public class Player : BaseObject
             .Where(_ => _state == EPlayerState.Move)
             .Subscribe(_ =>
             {
+                //Debug.Log("Move");
+
                 this.Update_Move();
             })
             .AddTo(_disposables);
@@ -72,12 +104,7 @@ public class Player : BaseObject
             })
             .AddTo(_disposables);
 
-        Contexts.BattleRush.SpawnAbilityEvent
-            .Subscribe(abilityId =>
-            {
-                this.Event_SpawnAbility(abilityId);
-            })
-            .AddTo(_disposables);
+        
 
         this.LateUpdateAsObservable()
             .Subscribe(_ =>
@@ -93,17 +120,6 @@ public class Player : BaseObject
             })
             .AddTo(_disposables);
 
-        //치트키
-        this.UpdateAsObservable()
-            .Subscribe(_ =>
-            {
-                if (Input.GetKeyDown(KeyCode.Q))
-                {
-                    _state = EPlayerState.Die;
-                    Debug.Log("Q key was pressed");
-                }
-            })
-            .AddTo(_disposables);
 
         return true;
     }
@@ -170,9 +186,12 @@ public class Player : BaseObject
     #region Event
     public void Event_SpawnAbility(int abilityId)
     {
+        Debug.Log($"Event_SpawnAbility / PlayerObjectId : {Contexts.BattleRush.PlayerObjectId}");
+        
+        int playerObjectId = Contexts.BattleRush.PlayerObjectId.Value;
         int templateId = 10000 + (int)abilityId;
         Ability abilityObj = Managers.Object.Spawn<Ability>(this.transform.position, 0, templateId, this.transform);
-        abilityObj.SetOwner(this.ObjectId);
+        abilityObj.SetOwner(playerObjectId);
     }
     #endregion
 }

@@ -16,6 +16,9 @@ public partial class BattleRushContext
     {
         _spawnAbilityEvent.OnNext(abilityId);
     }
+    
+    //int abilityId
+    public Subject<int> OnClickSpawnAbilityButton { get; private set; } = new Subject<int>();
 
     private Subject<int> _spawnWeaponEvent = new Subject<int>();
     public IObservable<int> SpawnWeaponEvent => _spawnWeaponEvent;
@@ -30,5 +33,8 @@ public partial class BattleRushContext
     {
         _spawnBulletEvent.OnNext(bulletId);
     }
+    
+
+    
 
 }
