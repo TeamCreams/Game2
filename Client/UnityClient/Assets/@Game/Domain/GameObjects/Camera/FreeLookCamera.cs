@@ -38,9 +38,15 @@ public class FreeLookCamera : BaseObject
         _camera.Follow = _player;
         _camera.UpdateTargetCache();
     }
-    private void SetTargetWithNewStruct()
+    private void ScreenSize()
     {
-        
+        CinemachineBrain brain = CinemachineBrain.GetActiveBrain(0);
+        if (brain != null)
+        {
+            Camera brainCamera = brain.OutputCamera;
+            int brainWidth = brainCamera.pixelWidth;
+            int brainHeight = brainCamera.pixelHeight;
+        }
     }
 
     void LateUpdate()

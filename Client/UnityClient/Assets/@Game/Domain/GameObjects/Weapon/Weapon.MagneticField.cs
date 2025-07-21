@@ -10,6 +10,7 @@ public partial class Weapon
         if (bulletObj != null)
         {
             bulletObj.SetInfo(_info.BulletId);
+            bulletObj.SetBulletType(_info.Type);
         }
     }
     private void SpawnMagneticFieldBullets()

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Data;
 using UniRx;
 using UniRx.Triggers;
@@ -12,7 +14,10 @@ public class Bullet : BaseObject
     private float _currentTime = 0f;
     private int _id = 0;
     private BulletData _info;
-
+    private BulletParticle _bulletParticle = null;
+    Dictionary<WeaponData.EType, Action> _callbacks = new Dictionary<WeaponData.EType, Action>();
+    private Transform _target;
+    private WeaponData.EType _eType;
     public override bool Init()
     {
         if (false == base.Init())
@@ -27,6 +32,10 @@ public class Bullet : BaseObject
             Debug.LogError("Rigidbody not Exist!");
             return false;
         }
+        _callbacks[WeaponData.EType.Missile] = MoveBullet;
+        _callbacks[WeaponData.EType.GuidedMissile] = MoveToTargetBullet;
+        _callbacks[WeaponData.EType.MagneticField] = UpdateMagneticFieldBullets;
+        _callbacks[WeaponData.EType.Laser] = UpdateLaserBullets;
 
         return true;
     }
@@ -37,6 +46,17 @@ public class Bullet : BaseObject
         {
             return false;
         }
+        this.UpdateAsObservable()
+            .Subscribe(_ =>
+            {                
+                _callbacks[_eType]?.Invoke();
+            }).AddTo(_disposables);
+
+        Observable.Interval(TimeSpan.FromSeconds(_lifeTime))
+            .Subscribe(_ =>
+            {
+                PushBullet();
+            }).AddTo(this);
 
         // this.OnTriggerEnterAsObservable()
         //     .Subscribe(collider => Attack(collider))
@@ -60,20 +80,25 @@ public class Bullet : BaseObject
         _info = dummy.BulletDataDict[_id];
         _speed = _info.Speed;
         _lifeTime = _info.LifeTime;
-
+        _bulletParticle = Managers.Object.Spawn<BulletParticle>(this.gameObject.transform.position, 0, 0, this.gameObject.transform); // 포지션이 이동을 해야하는데 안하는 듯?
     }
-
+    public void SetTarget(Transform target)
+    {
+        _target = target;
+    }
 
     public void SetDirection(Vector3 direction)
     {
         _direction = direction.normalized;
     }
-
-    private void FixedUpdate()
+    public void SetBulletType(WeaponData.EType eType)
     {
-        CheckLifeTime();
-        MoveBullet();
+        _eType = eType;
     }
+    // private void FixedUpdate()
+    // {
+    //     CheckLifeTime();
+    // }
 
     public void MoveBullet()
     {
@@ -83,18 +108,26 @@ public class Bullet : BaseObject
             _rigidbody.MovePosition(newPosition);
         }
     }
-    public void MoveToTargetBullet(Transform target)
+    public void MoveToTargetBullet()
     {
         if (_rigidbody != null && _direction != Vector3.zero)
         {
-            Vector3 directionToTarget = (target.position - transform.position).normalized;
+            Vector3 directionToTarget = (_target.position - transform.position).normalized;
             Vector3 newPosition = transform.position + directionToTarget * _speed * Time.fixedDeltaTime;
             _rigidbody.MovePosition(newPosition);
         }
     }
     private void UpdateLaserBullets()
     {
-        
+        Debug.Log("UpdateLaserBullets");
+
+        //Contexts.BattleRush.ScreenHeight.Value
+        //Contexts.BattleRush.ScreenWidth.Value
+    }
+
+    private void UpdateMagneticFieldBullets()
+    {
+        Debug.Log("UpdateMagneticFieldBullets");
     }
 
     private void CheckLifeTime()

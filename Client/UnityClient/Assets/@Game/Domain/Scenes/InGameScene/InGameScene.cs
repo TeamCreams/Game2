@@ -32,6 +32,14 @@ public class InGameScene : BaseScene
             })
             .AddTo(_disposables);
 
+        Unity.Cinemachine.CinemachineBrain brain = Unity.Cinemachine.CinemachineBrain.GetActiveBrain(0);
+        if (brain != null)
+        {
+            Camera brainCamera = brain.OutputCamera;
+            Contexts.BattleRush.ScreenWidth = brainCamera.pixelWidth;
+            Contexts.BattleRush.ScreenHeight = brainCamera.pixelHeight;
+        }
+
         return true;
     }
 

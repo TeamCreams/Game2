@@ -4,6 +4,8 @@ using UnityEngine;
 using UniRx;
 using System;
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
+using UniRx.Triggers;
 
 public partial class Weapon : BaseObject
 {
@@ -19,6 +21,11 @@ public partial class Weapon : BaseObject
     
     //int WeaponId
     public Subject<Unit> OnSpawnBullet { get; private set; } = new Subject<Unit>();
+    Dictionary<WeaponData.EType, Action> _callbacks = new Dictionary<WeaponData.EType, Action>();
+
+    private Action _action;
+    private int _index;
+    private int _allCount;
 
     public override bool Init()
     {
@@ -27,6 +34,10 @@ public partial class Weapon : BaseObject
             return false;
         }
         _weapon = Util.FindChild(this.gameObject, "WeaponObj", true);
+        _callbacks[WeaponData.EType.Missile] = SpawnMissileBullets;
+        _callbacks[WeaponData.EType.GuidedMissile] = SpawnGuidedMissileBullets;
+        _callbacks[WeaponData.EType.MagneticField] = SpawnMagneticFieldBullets;
+        _callbacks[WeaponData.EType.Laser] = SpawnLaserBullets;
 
         return true;
     }
@@ -38,6 +49,11 @@ public partial class Weapon : BaseObject
         _ownerTransform = Managers.Object.ObjectDic[ownerObjectId].transform;
         
         _isSetting = true;
+    }
+    public void SetIndex(int index, int allCount)
+    {
+        _index = index;
+        _allCount = allCount;
     }
     public override void SetInfo(int dataTemplate)
     {
@@ -69,23 +85,19 @@ public partial class Weapon : BaseObject
             .Subscribe(_ =>
             {
                 Debug.Log("Shoot");
-                switch (_info.Type)
-                {
-                    case WeaponData.EType.Missile:
-                        SpawnMissileBullets();
-                        break;
-                    case WeaponData.EType.GuidedMissile:
-                        SpawnGuidedMissileBullets();
-                        break;
-                    case WeaponData.EType.MagneticField:
-                        SpawnMagneticFieldBullets();
-                        break;
-                    case WeaponData.EType.Laser:
-                        SpawnLaserBullets();
-                        break;
-                }
+                if (_info == null)
+                    return;
+                
+                _callbacks[_info.Type]?.Invoke();
             })
             .AddTo(_disposables);
+
+            this.UpdateAsObservable()
+            .Subscribe(_ =>
+            {
+                // moving
+                _action?.Invoke();
+            }).AddTo(_disposables);
 
         return true;
     }
@@ -106,11 +118,13 @@ public partial class Weapon : BaseObject
             case AbilityData.EType.Around:
                 {
                     _weapon.SetActive(true);
+                    _action = UpdateAroundWeapon;
                 }
                 break;
             case AbilityData.EType.Follow:
                 {
                     _weapon.SetActive(true);
+                    _action = UpdateFollowWeapons;
                 }
                 break;
         }
@@ -133,25 +147,6 @@ public partial class Weapon : BaseObject
                 {
                     _position = _weapon.transform.position;
                 }
-                break;
-        }
-    }
-
-    private void SpawnWeapon()
-    {
-        switch (_info.Type)
-        {
-            case WeaponData.EType.Missile:
-                SpawnMissileBullets();
-                break;
-            case WeaponData.EType.GuidedMissile:
-                SpawnGuidedMissileBullets();
-                break;
-            case WeaponData.EType.MagneticField:
-                SpawnMagneticFieldBullets();
-                break;
-            case WeaponData.EType.Laser:
-                SpawnLaserBullets();
                 break;
         }
     }

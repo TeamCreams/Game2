@@ -4,7 +4,7 @@ public partial class Weapon
 {
     private void Event_SpawnGuidedMissile()
     {
-        Debug.Log("Event_SpawnGuidedMissile");
+        //Debug.Log("Event_SpawnGuidedMissile");
 
         SetWeaponPosition(); // 위치 조정
         int maxCount = _info.Count;
@@ -22,11 +22,13 @@ public partial class Weapon
 
             Transform target = Managers.Enemy.GetNearestEnemy(_ownerTransform.position);
             Bullet bulletObj = Managers.Object.Spawn<Bullet>(_position, 0, _info.BulletId);
-            if (bulletObj != null)
+            if (bulletObj != null && target != null)
             {
                 bulletObj.SetInfo(_info.BulletId);
-                bulletObj.MoveToTargetBullet(target);
+                bulletObj.SetBulletType(_info.Type);
+                bulletObj.SetTarget(target);
             }
+            Debug.Log("Success Event_SpawnGuidedMissile");
         }
     }
 

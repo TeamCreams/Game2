@@ -18,7 +18,7 @@ public partial class Weapon
         float z = Mathf.Sin(radian) * _orbitRadius;
         return _ownerTransform.position + new Vector3(x, 0, z);
     }
-    private void UpdateAroundWeapon(int index, int allCount)
+    private void UpdateAroundWeapon()
     {
         _currentRotationAngle += _rotationSpeed * Time.deltaTime;
         if (360 <= _currentRotationAngle)
@@ -27,7 +27,7 @@ public partial class Weapon
         }
 
         // _ownerTransform
-        float baseAngle = (float)(360 / allCount) * index;
+        float baseAngle = (float)(360 / _allCount) * _index;
         float currentAngle = baseAngle + _currentRotationAngle;
 
         Vector3 newPosition = CalculateOrbitPosition(currentAngle);

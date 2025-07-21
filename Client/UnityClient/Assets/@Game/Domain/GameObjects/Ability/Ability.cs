@@ -52,14 +52,14 @@ public partial class Ability : BaseObject
             return false;
         }
         
-        this.UpdateAsObservable()
-            .Subscribe(_ =>
-            {
-                if (_info == null)
-                    return;
+        // this.UpdateAsObservable()
+        //     .Subscribe(_ =>
+        //     {
+        //         if (_info == null)
+        //             return;
                 
-                _callbacks[_info.Type]?.Invoke();
-            }).AddTo(_disposables);
+        //         _callbacks[_info.Type]?.Invoke();
+        //     }).AddTo(_disposables);
 
         
         return true;
