@@ -7,7 +7,7 @@ public partial class BattleRushContext
 {
     public Vector2 PlayerDir { get; set; }
     public int? PlayerObjectId { get; set; } = null;
-    public List<int> EnemyObjectIdList { get; set; }
+    public List<int> EnemyObjectIdList { get; set; }  = new List<int>();
     public float? ScreenHeight { get; set; } = null;
     public float? ScreenWidth { get; set; } = null;
 

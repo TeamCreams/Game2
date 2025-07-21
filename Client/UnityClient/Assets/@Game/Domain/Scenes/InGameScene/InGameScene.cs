@@ -49,7 +49,7 @@ public class InGameScene : BaseScene
         Managers.UI.ShowSceneUI<UI_InGameScene>();
 
         _player = Managers.Object.Spawn<Player>(Vector3.zero, 0, 0);
-
+        Managers.Object.Spawn<EnemySpawner>(Vector3.zero, 0, 0);
         var followCamera = Managers.Object.Spawn<FreeLookCamera>(Vector3.zero, 0, 0);
     
         Contexts.BattleRush.PlayerObjectId = _player.ObjectId;
