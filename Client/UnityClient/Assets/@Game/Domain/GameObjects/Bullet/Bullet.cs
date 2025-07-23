@@ -80,7 +80,11 @@ public class Bullet : BaseObject
         _info = dummy.BulletDataDict[_id];
         _speed = _info.Speed;
         _lifeTime = _info.LifeTime;
-        _bulletParticle = Managers.Object.Spawn<BulletParticle>(this.gameObject.transform.position, 0, 0, this.gameObject.transform); // 포지션이 이동을 해야하는데 안하는 듯?
+        if (_bulletParticle == null)
+        {
+            _bulletParticle = Managers.Object.Spawn<BulletParticle>(Vector3.zero, 0, 0, this.gameObject.transform); // 포지션이 이동을 해야하는데 안하는 듯?
+            _bulletParticle.SetParents(this.gameObject.transform);            
+        }
     }
     public void SetTarget(Transform target)
     {

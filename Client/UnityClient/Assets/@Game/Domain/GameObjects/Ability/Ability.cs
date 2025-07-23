@@ -77,7 +77,7 @@ public partial class Ability : BaseObject
         Debug.Log($"ownerObjectId : {ownerObjectId}");
         _ownerObjectId = ownerObjectId;
         _ownerTransform = Managers.Object.ObjectDic[ownerObjectId].transform;
-        
+        this.transform.parent = _ownerTransform;
         SpawnWeapon();
     }
 

@@ -33,7 +33,11 @@ public class BulletParticle : BaseObject
     {
         base.SetInfo(dataTemplate);
         _id = DataTemplateID;
-        
-        
+
+
+    }
+    public void SetParents(Transform parent)
+    {
+        this.gameObject.transform.parent = parent;
     }
 }

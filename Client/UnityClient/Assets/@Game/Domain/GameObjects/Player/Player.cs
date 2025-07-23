@@ -190,7 +190,7 @@ public class Player : BaseObject
         
         int playerObjectId = Contexts.BattleRush.PlayerObjectId.Value;
         int templateId = 10000 + (int)abilityId;
-        Ability abilityObj = Managers.Object.Spawn<Ability>(this.transform.position, 0, templateId, this.transform);
+        Ability abilityObj = Managers.Object.Spawn<Ability>(Vector3.zero, 0, templateId, this.transform);
         abilityObj.SetOwner(playerObjectId);
     }
     #endregion

@@ -16,7 +16,6 @@ public partial class Weapon : BaseObject
     private GameObject _weapon = null;
     private Vector3 _position = Vector3.zero;
     private AbilityData.EType _eType;
-    private bool _isSetting = false;
     System.IDisposable _lifeTimer;
     
     //int WeaponId
@@ -47,8 +46,10 @@ public partial class Weapon : BaseObject
     {
         Debug.Log($"Weapon / ownerObjectId : {ownerObjectId}");
         _ownerTransform = Managers.Object.ObjectDic[ownerObjectId].transform;
-        
-        _isSetting = true;
+    }
+    public void SetParent(Transform parent)
+    {
+        this.transform.parent = parent;
     }
     public void SetIndex(int index, int allCount)
     {
@@ -74,8 +75,7 @@ public partial class Weapon : BaseObject
         {
             return false;
         }
-        Observable.Interval(TimeSpan.FromSeconds(_creatTime))//뭔가 시간이 이상함?
-            //.Where(_ => _isSetting == true)
+        Observable.Interval(TimeSpan.FromSeconds(_creatTime))
             .Subscribe(_ =>
             {
                 OnSpawnBullet?.OnNext(Unit.Default);

@@ -16,6 +16,7 @@ public partial class Ability
             {
                 weaponObj.SetOwner(_ownerObjectId);
                 weaponObj.SetAbilityDataEType(_info.Type);
+                weaponObj.SetParent(this.transform);
                 _weaponList.Add(weaponObj);
             }
         }
