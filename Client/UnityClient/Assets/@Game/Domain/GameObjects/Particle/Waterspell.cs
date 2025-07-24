@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BulletParticle : BaseObject
+public class Waterspell : BulletParticle
 {
     public override bool Init()
     {
@@ -32,8 +32,10 @@ public class BulletParticle : BaseObject
         base.SetInfo(dataTemplate);
         this.transform.position = Vector3.zero;
     }
-    public virtual void SetParents(Transform parent)
+    public override void SetParents(Transform parent)
     {
+        base.SetParents(parent);
         this.gameObject.transform.parent = parent;
     }
 }
+

@@ -23,8 +23,10 @@ public class Enemy : BaseObject
     private NavMeshAgent _navMeshAgent;
     
     private float _moveSpeed = 3.5f;
-    private float _stoppingDistance = 1.5f;
+    private float _stoppingDistance = 9.5f;
     private bool _hasAttacked = false;
+    private Flameshrower _bulletParticle = null;
+
     public override bool Init()
     {
         if (false == base.Init())
@@ -76,7 +78,7 @@ public class Enemy : BaseObject
                 this.Update_Die();
             }).AddTo(_disposables);
 
-            this.UpdateAsObservable()
+        this.UpdateAsObservable()
             .Where(_ => _state == State.Attack)
             .Subscribe(_ =>
             {
@@ -131,6 +133,7 @@ public class Enemy : BaseObject
         if (!_hasAttacked)
         {
             _animator.SetTrigger("Attack");
+            DistanceAttack();
             _hasAttacked = true; 
         }
         
@@ -139,6 +142,38 @@ public class Enemy : BaseObject
         {
             _hasAttacked = false;
             _state = State.Move;
+        }
+    }
+
+    private void CloseAttack()
+    {
+        
+    }
+
+    private void DistanceAttack()
+    {
+        if (_bulletParticle == null)
+        {
+            _bulletParticle = Managers.Object.Spawn<Flameshrower>(Vector3.zero, 0, 0, this.gameObject.transform);
+            _bulletParticle.SetParents(this.gameObject.transform);
+        }
+        else
+        {
+            _bulletParticle.SetInfo(_bulletParticle.ObjectId);
+        }
+    }
+    
+    private void DistanceAttack<T>() where T : BaseObject
+    {
+        if (_bulletParticle == null)
+        {
+            T bulletParticle = Managers.Object.Spawn<T>(Vector3.zero, 0, 0, this.gameObject.transform);
+            BulletParticle bp = bulletParticle.GetComponent<BulletParticle>();
+            bp.SetParents(this.gameObject.transform);
+        }
+        else
+        {
+            _bulletParticle.SetInfo(_bulletParticle.ObjectId);
         }
     }
 

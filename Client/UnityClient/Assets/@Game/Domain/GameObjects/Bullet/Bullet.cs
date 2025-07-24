@@ -19,6 +19,8 @@ public class Bullet : BaseObject
     private Transform _target;
     private WeaponData.EType _eType;
     private float _damage;
+    DummyData _dummy;
+
     public float Damage
     {
         get => _damage;
@@ -30,6 +32,7 @@ public class Bullet : BaseObject
             return false;
         }
 
+        _dummy = new DummyData();
 
         _rigidbody = GetComponent<Rigidbody>();
         if (_rigidbody == null)
@@ -81,14 +84,17 @@ public class Bullet : BaseObject
         _id = DataTemplateID;
         _currentTime = 0f;
         Debug.Log($"Bullet Id : {_id}");
-        DummyData dummy = new DummyData();
-        _info = dummy.BulletDataDict[_id];
+        _info = _dummy.BulletDataDict[_id];
         _speed = _info.Speed;
         _lifeTime = _info.LifeTime;
         if (_bulletParticle == null)
         {
             _bulletParticle = Managers.Object.Spawn<BulletParticle>(Vector3.zero, 0, 0, this.gameObject.transform); // 포지션이 이동을 해야하는데 안하는 듯?
             _bulletParticle.SetParents(this.gameObject.transform);
+        }
+        else
+        {
+            _bulletParticle.SetInfo(_bulletParticle.ObjectId);
         }
         _damage = _info.Damage;
     }
@@ -105,9 +111,19 @@ public class Bullet : BaseObject
     {
         _eType = eType;
     }
-    // private void FixedUpdate()
+    // public void SetParticle()
     // {
-    //     CheckLifeTime();
+    //     var a = _dummy.BulletTypeMap[_id];
+    //     if (_bulletParticle == null)
+    //     {
+    //         a bulletParticle = Managers.Object.Spawn<a>(Vector3.zero, 0, 0, this.gameObject.transform);
+    //         BulletParticle bp = bulletParticle.GetComponent<BulletParticle>();
+    //         bp.SetParents(this.gameObject.transform);
+    //     }
+    //     else
+    //     {
+    //         _bulletParticle.SetInfo(_bulletParticle.ObjectId);
+    //     }
     // }
 
     public void MoveBullet()

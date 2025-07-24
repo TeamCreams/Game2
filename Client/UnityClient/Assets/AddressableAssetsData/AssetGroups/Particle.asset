@@ -16,7 +16,13 @@ MonoBehaviour:
   m_GUID: 8077c6b6173424d289c329e992814345
   m_SerializeEntries:
   - m_GUID: 48116ec1e41c7624c9f5ce40f96b049c
-    m_Address: BulletParticle
+    m_Address: Waterspell
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 663f0566fc3b04304902369b744a4fa6
+    m_Address: Flameshrower
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad

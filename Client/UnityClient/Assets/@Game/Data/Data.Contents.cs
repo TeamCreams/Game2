@@ -97,12 +97,28 @@ namespace Data
             { 10205, new BulletData() { Id = 10205, Type = BulletData.EPositionType.World, LifeTime = 1.5f, Speed = 7.0f, Damage = 8.0f } },
         };
 
+        private Dictionary<int, System.Type> _bulletTypeMap = new Dictionary<int, System.Type>()
+        {
+            { 10201, typeof(Waterspell) },
+            { 10202, typeof(Flameshrower) },
+            { 10203, typeof(Waterspell) },
+            { 10204, typeof(Flameshrower) },
+            { 10205, typeof(Waterspell) },
+            // 다른 탄환 타입들 추가
+        };
+
+
         // 딕셔너리 접근자 프로퍼티
         public IReadOnlyDictionary<int, AbilityData> AbilityDataDict => _abilityDataDict;
 
         public IReadOnlyDictionary<int, WeaponData> WeaponDataDict => _weaponDataDict;
 
         public IReadOnlyDictionary<int, BulletData> BulletDataDict => _bulletDataDict;
+
+        public IReadOnlyDictionary<int, System.Type> BulletTypeMap => _bulletTypeMap;
+
     }
+
+    
 
 }
