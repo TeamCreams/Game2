@@ -12,16 +12,19 @@ public class Enemy : BaseObject
         Idle,
         Move,
         Attack,
+        TakeAttack,
         Die
     }
     private float _hp = 0f;
+    private Animator _animator;
+
     private State _state = State.Move;
     private Transform _target;
     private NavMeshAgent _navMeshAgent;
     
     private float _moveSpeed = 3.5f;
     private float _stoppingDistance = 1.5f;
-    
+    private bool _hasAttacked = false;
     public override bool Init()
     {
         if (false == base.Init())
@@ -29,6 +32,8 @@ public class Enemy : BaseObject
             return false;
         }
         _navMeshAgent = GetComponent<NavMeshAgent>();
+        _animator = GetComponentInChildren<Animator>();
+
         return true;
     }
     public override void SetInfo(int dataTemplate)
@@ -68,9 +73,16 @@ public class Enemy : BaseObject
             .Where(_ => _state == State.Die)
             .Subscribe(_ =>
             {
-                // moving
                 this.Update_Die();
             }).AddTo(_disposables);
+
+            this.UpdateAsObservable()
+            .Where(_ => _state == State.Attack)
+            .Subscribe(_ =>
+            {
+                this.Update_Attack();
+            }).AddTo(_disposables);
+
         return true;
     }
 
@@ -84,6 +96,8 @@ public class Enemy : BaseObject
     private void Update_Idle()
     {
         // 이게 필요할지 모르겠음
+        _animator.SetBool("isMoving", true);
+
     }
 
     private void Update_Move()
@@ -103,6 +117,29 @@ public class Enemy : BaseObject
         // 아이템 드롭
         // 죽은 모션
         // 삭제
+        Debug.Log("Die");
+        _animator.SetTrigger("Die");
+        _animator.SetBool("isDead", true);
+        _animator.SetBool("isMoving", false);
+
+        Managers.Resource.Destroy(this.gameObject);
+    }
+
+    // 장거리or단거리
+    private void Update_Attack()
+    {
+        if (!_hasAttacked)
+        {
+            _animator.SetTrigger("Attack");
+            _hasAttacked = true; 
+        }
+        
+        AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
+        if (stateInfo.IsName("Attack01") && 1.0f <= stateInfo.normalizedTime)
+        {
+            _hasAttacked = false;
+            _state = State.Move;
+        }
     }
 
     #endregion
@@ -110,8 +147,11 @@ public class Enemy : BaseObject
     {
         if (collision.gameObject.GetComponent<Bullet>() != null)
         {
+            _animator.SetTrigger("TakeDamage");
+            float _damage = collision.gameObject.GetComponent<Bullet>().Damage;
             // bullet 삭제
             // 데미지 처리
+            _hp -= _damage;
             if (_hp <= 0)
             {
                 _state = State.Die;

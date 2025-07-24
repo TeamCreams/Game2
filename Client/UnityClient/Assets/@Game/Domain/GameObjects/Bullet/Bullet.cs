@@ -18,6 +18,11 @@ public class Bullet : BaseObject
     Dictionary<WeaponData.EType, Action> _callbacks = new Dictionary<WeaponData.EType, Action>();
     private Transform _target;
     private WeaponData.EType _eType;
+    private float _damage;
+    public float Damage
+    {
+        get => _damage;
+    }
     public override bool Init()
     {
         if (false == base.Init())
@@ -83,8 +88,9 @@ public class Bullet : BaseObject
         if (_bulletParticle == null)
         {
             _bulletParticle = Managers.Object.Spawn<BulletParticle>(Vector3.zero, 0, 0, this.gameObject.transform); // 포지션이 이동을 해야하는데 안하는 듯?
-            _bulletParticle.SetParents(this.gameObject.transform);            
+            _bulletParticle.SetParents(this.gameObject.transform);
         }
+        _damage = _info.Damage;
     }
     public void SetTarget(Transform target)
     {
