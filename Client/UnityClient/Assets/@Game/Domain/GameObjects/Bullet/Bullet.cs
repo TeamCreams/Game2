@@ -60,11 +60,11 @@ public class Bullet : BaseObject
                 _callbacks[_eType]?.Invoke();
             }).AddTo(_disposables);
 
-        Observable.Interval(TimeSpan.FromSeconds(_lifeTime))
+        Observable.Timer(TimeSpan.FromSeconds(_lifeTime))
             .Subscribe(_ =>
             {
-                PushBullet();
-            }).AddTo(this);
+                //PushBullet();
+            }).AddTo(_disposables);
 
         // this.OnTriggerEnterAsObservable()
         //     .Subscribe(collider => Attack(collider))
@@ -89,12 +89,15 @@ public class Bullet : BaseObject
         _lifeTime = _info.LifeTime;
         if (_bulletParticle == null)
         {
-            _bulletParticle = Managers.Object.Spawn<BulletParticle>(Vector3.zero, 0, 0, this.gameObject.transform); // 포지션이 이동을 해야하는데 안하는 듯?
+            _bulletParticle = Managers.Object.Spawn<BulletParticle>(_dummy.BulletTypeMap[_id].Name, Vector3.zero, 0, 0, this.gameObject.transform); // 포지션이 이동을 해야하는데 안하는 듯?
             _bulletParticle.SetParents(this.gameObject.transform);
+            _bulletParticle.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.LookRotation(this.transform.forward));
         }
         else
         {
             _bulletParticle.SetInfo(_bulletParticle.ObjectId);
+            _bulletParticle.SetParents(this.gameObject.transform);
+            _bulletParticle.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.LookRotation(this.transform.forward));
         }
         _damage = _info.Damage;
     }
@@ -131,6 +134,7 @@ public class Bullet : BaseObject
         if (_rigidbody != null && _direction != Vector3.zero)
         {
             Vector3 newPosition = transform.position + _direction * _speed * Time.fixedDeltaTime;
+            this.transform.LookAt(newPosition);
             _rigidbody.MovePosition(newPosition);
         }
     }
@@ -140,6 +144,7 @@ public class Bullet : BaseObject
         {
             Vector3 directionToTarget = (_target.position - transform.position).normalized;
             Vector3 newPosition = transform.position + directionToTarget * _speed * Time.fixedDeltaTime;
+            this.transform.LookAt(newPosition);
             _rigidbody.MovePosition(newPosition);
         }
     }

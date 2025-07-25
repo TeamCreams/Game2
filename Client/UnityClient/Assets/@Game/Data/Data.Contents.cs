@@ -100,9 +100,9 @@ namespace Data
         private Dictionary<int, System.Type> _bulletTypeMap = new Dictionary<int, System.Type>()
         {
             { 10201, typeof(Waterspell) },
-            { 10202, typeof(Flameshrower) },
+            { 10202, typeof(Waterspell) },
             { 10203, typeof(Waterspell) },
-            { 10204, typeof(Flameshrower) },
+            { 10204, typeof(Waterspell) },
             { 10205, typeof(Waterspell) },
             // 다른 탄환 타입들 추가
         };

@@ -1,5 +1,6 @@
 using System;
 using UniRx;
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class InGameScene : BaseScene
@@ -32,7 +33,7 @@ public class InGameScene : BaseScene
             })
             .AddTo(_disposables);
 
-        Unity.Cinemachine.CinemachineBrain brain = Unity.Cinemachine.CinemachineBrain.GetActiveBrain(0);
+        var brain = GameObject.FindFirstObjectByType<CinemachineBrain>();
         if (brain != null)
         {
             Camera brainCamera = brain.OutputCamera;
@@ -49,12 +50,12 @@ public class InGameScene : BaseScene
         Managers.UI.ShowSceneUI<UI_InGameScene>();
 
         _player = Managers.Object.Spawn<Player>(Vector3.zero, 0, 0);
-        Managers.Object.Spawn<EnemySpawner>(Vector3.zero, 0, 0);
         var followCamera = Managers.Object.Spawn<FreeLookCamera>(Vector3.zero, 0, 0);
     
         Contexts.BattleRush.PlayerObjectId = _player.ObjectId;
         followCamera.SetTarget();
 
+        Managers.Object.Spawn<EnemySpawner>(Vector3.zero, 0, 0);
     }
 
     public override void Clear()

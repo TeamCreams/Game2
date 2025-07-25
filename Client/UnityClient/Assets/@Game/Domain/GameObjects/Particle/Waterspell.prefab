@@ -4880,7 +4880,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: d2b82723c6dd2bb419d2f5ab2d1cf1b5, type: 2}
-  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9859,7 +9858,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4312981744632320
 Transform:
   m_ObjectHideFlags: 0
@@ -14792,7 +14791,7 @@ GameObject:
   - component: {fileID: 199608254630440520}
   - component: {fileID: 82468315193720996}
   - component: {fileID: 114262081137135130}
-  - component: {fileID: -7598128534437811529}
+  - component: {fileID: -1291538876145064856}
   m_Layer: 0
   m_Name: Waterspell
   m_TagString: Untagged
@@ -19862,7 +19861,7 @@ MonoBehaviour:
   RandomVolume: 0
   minVolume: 0.4
   maxVolume: 1
---- !u!114 &-7598128534437811529
+--- !u!114 &-1291538876145064856
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -19871,9 +19870,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1626169710182040}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d80e2de4fd03a4cebb622d402f7b2876, type: 3}
+  m_Script: {fileID: 11500000, guid: f8834a38299164aa988e4cd4650d8c5c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BulletParticle
+  m_EditorClassIdentifier: Assembly-CSharp::Waterspell
 --- !u!1 &1807612360915844
 GameObject:
   m_ObjectHideFlags: 0
@@ -24736,7 +24735,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 892ed97ed1391f74094b6fd404aab7ab, type: 2}
-  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -29652,7 +29650,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 892ed97ed1391f74094b6fd404aab7ab, type: 2}
-  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

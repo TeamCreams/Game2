@@ -46,6 +46,28 @@ public class ObjectManager
         return obj as T;
     }
 
+    
+    public T Spawn<T>(string prefabName, Vector3 position, int objectId, int templateID, Transform parent) where T : BaseObject
+    {
+        GameObject go = Managers.Resource.Instantiate(prefabName, parent, pooling: true);
+        go.name = prefabName;
+        go.transform.position = position;
+
+        BaseObject obj = go.GetComponent<BaseObject>();
+        obj.SetInfo(templateID);
+
+        if ( 0 == objectId )
+        {
+            objectId = ++_objectIndexer;
+        }
+
+        obj.ObjectId = objectId;
+
+        ObjectDic.Add(objectId, obj);
+
+        return obj as T;
+    }
+    
     public T Spawn<T>(Vector3 position, int objectId, int templateID, Transform parent) where T : BaseObject
     {
         string prefabName = typeof(T).Name;
