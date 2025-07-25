@@ -32,7 +32,6 @@ public class ObjectManager
         go.transform.position = position;
 
         BaseObject obj = go.GetComponent<BaseObject>();
-        obj.SetInfo(templateID);
 
         if ( 0 == objectId )
         {
@@ -40,6 +39,7 @@ public class ObjectManager
         }
 
         obj.ObjectId = objectId;
+        obj.SetInfo(templateID);
 
         ObjectDic.Add(objectId, obj);
 
@@ -54,7 +54,6 @@ public class ObjectManager
         go.transform.position = position;
 
         BaseObject obj = go.GetComponent<BaseObject>();
-        obj.SetInfo(templateID);
 
         if ( 0 == objectId )
         {
@@ -62,7 +61,7 @@ public class ObjectManager
         }
 
         obj.ObjectId = objectId;
-
+        obj.SetInfo(templateID);
         ObjectDic.Add(objectId, obj);
 
         return obj as T;

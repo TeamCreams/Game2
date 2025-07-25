@@ -1,45 +1,63 @@
 using System.Collections.Generic;
 using Data;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 public partial class Weapon
 {
-    #region Arround
-    // Around 변수들
-    private float _rotationSpeed = 50f;
-    private float _currentRotationAngle = 0f;
-    private float _orbitRadius = 2;
+    
+    public partial void OnSpawn_Moving()
+    {
+        Observe_AroundMoving();
+        
+    }
 
-    private Vector3 CalculateOrbitPosition(float angle)
+    private void Observe_AroundMoving()
+    {
+        float rotationSpeed = 50f;
+        float currentRotationAngle = 0f;
+        float orbitRadius = 2;
+
+        this.UpdateAsObservable()
+            .Subscribe(_ =>
+            {
+                if (_eType != AbilityData.EType.Around)
+                    return;
+                
+                currentRotationAngle += rotationSpeed * Time.deltaTime;
+                if (360 <= currentRotationAngle)
+                {
+                    currentRotationAngle -= 360f;
+                }
+
+                // _ownerTransform
+                float baseAngle = (float)(360 / _allCount) * _index;
+                float currentAngle = baseAngle + currentRotationAngle;
+
+                Vector3 newPosition = CalculateOrbitPosition(currentAngle, orbitRadius);
+                this.transform.position = newPosition;
+
+                Vector3 direction = (newPosition - _ownerTransform.position).normalized;
+                if (direction != Vector3.zero)
+                {
+                    this.transform.rotation = Quaternion.LookRotation(direction);
+                }
+            })
+            .AddTo(_disposables);
+    }
+    
+    
+    private Vector3 CalculateOrbitPosition(float angle, float orbitRadius)
     {
         if (_ownerTransform == null) return transform.position;
 
         float radian = angle * Mathf.Deg2Rad;
-        float x = Mathf.Cos(radian) * _orbitRadius;
-        float z = Mathf.Sin(radian) * _orbitRadius;
+        float x = Mathf.Cos(radian) * orbitRadius;
+        float z = Mathf.Sin(radian) * orbitRadius;
         return _ownerTransform.position + new Vector3(x, 0, z);
     }
-    private void UpdateAroundWeapon()
-    {
-        _currentRotationAngle += _rotationSpeed * Time.deltaTime;
-        if (360 <= _currentRotationAngle)
-        {
-            _currentRotationAngle -= 360f;
-        }
-
-        // _ownerTransform
-        float baseAngle = (float)(360 / _allCount) * _index;
-        float currentAngle = baseAngle + _currentRotationAngle;
-
-        Vector3 newPosition = CalculateOrbitPosition(currentAngle);
-        this.transform.position = newPosition;
-
-        Vector3 direction = (newPosition - _ownerTransform.position).normalized;
-        if (direction != Vector3.zero)
-        {
-            this.transform.rotation = Quaternion.LookRotation(direction);
-        }
-    }
-    #endregion
+    
+    
 
     #region Follow
     // Follow 변수들

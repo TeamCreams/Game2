@@ -34,12 +34,12 @@ public class InGameScene : BaseScene
             .AddTo(_disposables);
 
         var brain = GameObject.FindFirstObjectByType<CinemachineBrain>();
-        if (brain != null)
-        {
-            Camera brainCamera = brain.OutputCamera;
-            Contexts.BattleRush.ScreenWidth = brainCamera.pixelWidth;
-            Contexts.BattleRush.ScreenHeight = brainCamera.pixelHeight;
-        }
+        // if (brain != null)
+        // {
+        //     Camera brainCamera = brain.OutputCamera;
+        //     Contexts.BattleRush.ScreenWidth = brainCamera.pixelWidth;
+        //     Contexts.BattleRush.ScreenHeight = brainCamera.pixelHeight;
+        // }
 
         return true;
     }

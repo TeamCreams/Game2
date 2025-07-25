@@ -58,7 +58,10 @@ public class Enemy : BaseObject
             _navMeshAgent.stoppingDistance = _stoppingDistance;
         }
 
-        Contexts.BattleRush.EnemyObjectIdList.Add(this.ObjectId);
+        Observable.NextFrame()
+            .ObserveOnMainThread()
+            .Subscribe(_ => Contexts.BattleRush.EnemyObjectIdList.Add(this.ObjectId));
+        
         this.OnTriggerEnterAsObservable()
             .Subscribe(collider => Attacked(collider))
             .AddTo(_disposables);

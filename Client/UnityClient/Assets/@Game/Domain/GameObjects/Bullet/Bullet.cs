@@ -140,13 +140,15 @@ public class Bullet : BaseObject
     }
     public void MoveToTargetBullet()
     {
-        if (_rigidbody != null && _direction != Vector3.zero)
+        if (_rigidbody == null)
         {
-            Vector3 directionToTarget = (_target.position - transform.position).normalized;
-            Vector3 newPosition = transform.position + directionToTarget * _speed * Time.fixedDeltaTime;
-            this.transform.LookAt(newPosition);
-            _rigidbody.MovePosition(newPosition);
+            return;
         }
+        
+        Vector3 directionToTarget = (_target.position - transform.position).normalized;
+        Vector3 newPosition = transform.position + directionToTarget * _speed * Time.fixedDeltaTime;
+        this.transform.LookAt(newPosition);
+        _rigidbody.MovePosition(newPosition);
     }
     private void UpdateLaserBullets()
     {

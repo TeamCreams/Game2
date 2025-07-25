@@ -26,6 +26,9 @@ public partial class Weapon : BaseObject
     private int _index;
     private int _allCount;
 
+    public partial void OnSpawn_Moving();
+
+
     public override bool Init()
     {
         if (false == base.Init())
@@ -92,13 +95,14 @@ public partial class Weapon : BaseObject
             })
             .AddTo(_disposables);
 
-            this.UpdateAsObservable()
+        this.UpdateAsObservable()
             .Subscribe(_ =>
             {
                 // moving
                 _action?.Invoke();
             }).AddTo(_disposables);
 
+        OnSpawn_Moving();
         return true;
     }
     public override void OnDespawn()
@@ -118,7 +122,7 @@ public partial class Weapon : BaseObject
             case AbilityData.EType.Around:
                 {
                     _weapon.SetActive(true);
-                    _action = UpdateAroundWeapon;
+                    _action = null;
                 }
                 break;
             case AbilityData.EType.Follow:
