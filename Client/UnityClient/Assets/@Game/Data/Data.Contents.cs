@@ -74,17 +74,17 @@ namespace Data
             { 10001, new AbilityData() { Id = 10001, WeaponId = 10101, Type = AbilityData.EType.Static, Count = 1 } },
             { 10002, new AbilityData() { Id = 10002, WeaponId = 10102, Type = AbilityData.EType.Around, Count = 5 } },
             { 10003, new AbilityData() { Id = 10003, WeaponId = 10103, Type = AbilityData.EType.Follow, Count = 3 } },
-            { 10004, new AbilityData() { Id = 10004, WeaponId = 10104, Type = AbilityData.EType.Static, Count = 2 } },
+            { 10004, new AbilityData() { Id = 10004, WeaponId = 10104, Type = AbilityData.EType.Static, Count = 1 } },
             { 10005, new AbilityData() { Id = 10005, WeaponId = 10105, Type = AbilityData.EType.Static, Count = 1 } },
 
         };
 
         private Dictionary<int, WeaponData> _weaponDataDict = new Dictionary<int, WeaponData>()
         {
-            { 10101, new WeaponData() { Id = 10101, BulletId = 10201, Type = WeaponData.EType.Missile, Count = 1, CoolDown = 1.5f } },
-            { 10102, new WeaponData() { Id = 10102, BulletId = 10202, Type = WeaponData.EType.Missile, Count = 7, CoolDown = 0.1f } },
-            { 10103, new WeaponData() { Id = 10103, BulletId = 10203, Type = WeaponData.EType.GuidedMissile, Count = 1, CoolDown = 3.0f } },
-            { 10104, new WeaponData() { Id = 10104, BulletId = 10204, Type = WeaponData.EType.MagneticField, Count = 1, CoolDown = 4.0f } },
+            { 10101, new WeaponData() { Id = 10101, BulletId = 10201, Type = WeaponData.EType.Missile, Count = 1, CoolDown = 2.5f } },
+            { 10102, new WeaponData() { Id = 10102, BulletId = 10202, Type = WeaponData.EType.Missile, Count = 7, CoolDown = 0.3f } }, 
+            { 10103, new WeaponData() { Id = 10103, BulletId = 10203, Type = WeaponData.EType.GuidedMissile, Count = 1, CoolDown = 4.0f } }, 
+            { 10104, new WeaponData() { Id = 10104, BulletId = 10204, Type = WeaponData.EType.MagneticField, Count = 1, CoolDown = 10.0f } },
             { 10105, new WeaponData() { Id = 10105, BulletId = 10205, Type = WeaponData.EType.Laser, Count = 1, CoolDown = 3.0f } },
         };
 
@@ -93,7 +93,7 @@ namespace Data
             { 10201, new BulletData() { Id = 10201, Type = BulletData.EPositionType.Parent, LifeTime = 2.0f, Speed = 10.0f, Damage = 5.0f } },
             { 10202, new BulletData() { Id = 10202, Type = BulletData.EPositionType.World, LifeTime = 0.2f, Speed = 20.0f, Damage = 7.0f } },
             { 10203, new BulletData() { Id = 10203, Type = BulletData.EPositionType.Parent, LifeTime = 3.0f, Speed = 7.0f, Damage = 10.0f } },
-            { 10204, new BulletData() { Id = 10204, Type = BulletData.EPositionType.World, LifeTime = 1.5f, Speed = 10.0f, Damage = 6.0f } },
+            { 10204, new BulletData() { Id = 10204, Type = BulletData.EPositionType.Parent, LifeTime = 3.0f, Speed = 10.0f, Damage = 6.0f } },
             { 10205, new BulletData() { Id = 10205, Type = BulletData.EPositionType.World, LifeTime = 1.5f, Speed = 7.0f, Damage = 8.0f } },
         };
 
@@ -102,7 +102,7 @@ namespace Data
             { 10201, typeof(Waterspell) },
             { 10202, typeof(Waterspell) },
             { 10203, typeof(Waterspell) },
-            { 10204, typeof(Waterspell) },
+            { 10204, typeof(MagneticField) },
             { 10205, typeof(Waterspell) },
             // 다른 탄환 타입들 추가
         };

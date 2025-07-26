@@ -1,3 +1,4 @@
+using Data;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -26,7 +27,7 @@ public class UI_SelectButton : UI_Base
     public void SetInfo(int id)
     {
         _id = id;
-        GetText((int)Texts.Name).text = id.ToString();
+        GetText((int)Texts.Name).text = _id.ToString();
     }    
     private void SpawnAbillity()
     {

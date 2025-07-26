@@ -29548,6 +29548,7 @@ GameObject:
   - component: {fileID: 4359416996332790238}
   - component: {fileID: 7963940464923123464}
   - component: {fileID: 4229707055566835505}
+  - component: {fileID: 6425505699770471744}
   m_Layer: 0
   m_Name: MagneticField
   m_TagString: Untagged
@@ -34605,6 +34606,18 @@ MonoBehaviour:
   RandomVolume: 0
   minVolume: 0.4
   maxVolume: 1
+--- !u!114 &6425505699770471744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6294079492412492907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43ab441d48b5d480b8c91643cbe6ddc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MagneticField
 --- !u!1 &7034294154866601530
 GameObject:
   m_ObjectHideFlags: 0

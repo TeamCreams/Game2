@@ -30,7 +30,7 @@ public class BulletParticle : BaseObject
     public override void SetInfo(int dataTemplate)
     {
         base.SetInfo(dataTemplate);
-        this.transform.position = Vector3.zero;
+        this.transform.localPosition = Vector3.zero;
     }
     public virtual void SetParents(Transform parent)
     {

@@ -87,7 +87,7 @@ public partial class Weapon : BaseObject
         OnSpawnBullet
             .Subscribe(_ =>
             {
-                Debug.Log("Shoot");
+                //Debug.Log("Shoot");
                 if (_info == null)
                     return;
                 

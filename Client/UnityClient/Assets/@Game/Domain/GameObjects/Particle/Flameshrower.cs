@@ -30,7 +30,7 @@ public class Flameshrower : BulletParticle
     public override void SetInfo(int dataTemplate)
     {
         base.SetInfo(dataTemplate);
-        this.transform.position = Vector3.zero;
+        this.transform.localPosition = Vector3.zero;
     }
     public override void SetParents(Transform parent)
     {

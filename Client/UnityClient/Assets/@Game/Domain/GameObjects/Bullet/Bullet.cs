@@ -63,7 +63,7 @@ public class Bullet : BaseObject
         Observable.Timer(TimeSpan.FromSeconds(_lifeTime))
             .Subscribe(_ =>
             {
-                //PushBullet();
+                PushBullet();
             }).AddTo(_disposables);
 
         // this.OnTriggerEnterAsObservable()
@@ -114,6 +114,13 @@ public class Bullet : BaseObject
     {
         _eType = eType;
     }
+    public void SetParent(Transform parent)
+    {
+        this.transform.localPosition = Vector3.zero;
+
+        this.gameObject.transform.parent = parent;
+    }
+
     // public void SetParticle()
     // {
     //     var a = _dummy.BulletTypeMap[_id];
