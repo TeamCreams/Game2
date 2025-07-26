@@ -82,7 +82,7 @@ public partial class Weapon : BaseObject
             .Subscribe(_ =>
             {
                 OnSpawnBullet?.OnNext(Unit.Default);
-            }).AddTo(this);
+            }).AddTo(_disposables);
 
         OnSpawnBullet
             .Subscribe(_ =>
