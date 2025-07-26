@@ -27,6 +27,9 @@ public class Enemy : BaseObject
     private bool _hasAttacked = false;
     private Flameshrower _bulletParticle = null;
 
+    private float _attackCooldown = 3;
+    private float _lastAttackTime = 0f;
+    
     public override bool Init()
     {
         if (false == base.Init())
@@ -133,13 +136,23 @@ public class Enemy : BaseObject
     // 장거리or단거리
     private void Update_Attack()
     {
+        float timeSinceLastAttack = Time.time - _lastAttackTime;
+
+        if (timeSinceLastAttack < _attackCooldown)
+        {
+            // 아직 쿨다운 중이면 공격하지 않음
+            return;
+        }
+
         if (!_hasAttacked)
         {
             _animator.SetTrigger("Attack");
             DistanceAttack();
-            _hasAttacked = true; 
+            _hasAttacked = true;
+            _lastAttackTime = Time.time;
         }
-        
+
+        // 애니메이션이 끝나면 이동 상태로 복귀
         AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
         if (stateInfo.IsName("Attack01") && 1.0f <= stateInfo.normalizedTime)
         {
@@ -150,7 +163,7 @@ public class Enemy : BaseObject
 
     private void CloseAttack()
     {
-        
+
     }
 
     private void DistanceAttack()
