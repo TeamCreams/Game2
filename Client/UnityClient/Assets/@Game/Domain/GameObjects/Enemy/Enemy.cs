@@ -1,3 +1,4 @@
+using System;
 using Data;
 using UniRx;
 using UniRx.Triggers;
@@ -21,7 +22,7 @@ public class Enemy : BaseObject
     private State _state = State.Move;
     private Transform _target;
     private NavMeshAgent _navMeshAgent;
-    
+
     private float _moveSpeed = 3.5f;
     private float _stoppingDistance = 9.5f;
     private bool _hasAttacked = false;
@@ -29,7 +30,12 @@ public class Enemy : BaseObject
 
     private float _attackCooldown = 3;
     private float _lastAttackTime = 0f;
-    
+
+    // 자기장
+    private IDisposable _magneticFieldTimer;
+    private MagneticField _currentMagneticField;
+    private float _magneticDamageInterval = 1f;
+
     public override bool Init()
     {
         if (false == base.Init())
@@ -64,9 +70,13 @@ public class Enemy : BaseObject
         Observable.NextFrame()
             .ObserveOnMainThread()
             .Subscribe(_ => Contexts.BattleRush.EnemyObjectIdList.Add(this.ObjectId));
-        
+
         this.OnTriggerEnterAsObservable()
             .Subscribe(collider => Attacked(collider))
+            .AddTo(_disposables);
+
+        this.OnTriggerExitAsObservable()
+            .Subscribe(collider => OnTriggerExitMagneticField(collider))
             .AddTo(_disposables);
 
         this.UpdateAsObservable()
@@ -96,6 +106,7 @@ public class Enemy : BaseObject
 
     public override void OnDespawn()
     {
+        StopMagneticFieldDamage();
         base.OnDespawn();
         Contexts.BattleRush.EnemyObjectIdList.Remove(this.ObjectId);
     }
@@ -111,7 +122,7 @@ public class Enemy : BaseObject
     private void Update_Move()
     {
         _navMeshAgent.SetDestination(_target.position);
-            
+
         float distanceToTarget = Vector3.Distance(transform.position, _target.position);
         if (distanceToTarget <= _stoppingDistance)
         {
@@ -178,7 +189,7 @@ public class Enemy : BaseObject
             _bulletParticle.SetInfo(_bulletParticle.ObjectId);
         }
     }
-    
+
     private void DistanceAttack<T>() where T : BaseObject
     {
         if (_bulletParticle == null)
@@ -196,13 +207,31 @@ public class Enemy : BaseObject
     #endregion
     private void Attacked(Collider collision)
     {
-        if (collision.gameObject.GetComponent<Bullet>() != null)
+        float damage = 0f;
+        bool isAttacked = false;
+
+        // 총알
+        Bullet bullet = collision.gameObject.GetComponent<Bullet>();
+        if (bullet != null)
+        {
+            damage = bullet.Damage;
+            isAttacked = true;
+            Managers.Resource.Destroy(bullet.gameObject);
+        }
+
+        // 자기장
+        MagneticField magneticField = collision.gameObject.GetComponent<MagneticField>();
+        if (magneticField != null)
+        {
+            StartMagneticFieldDamage(magneticField);
+            return;
+        }
+
+        // 공통 처리
+        if (isAttacked)
         {
             _animator.SetTrigger("TakeDamage");
-            float _damage = collision.gameObject.GetComponent<Bullet>().Damage;
-            // bullet 삭제
-            // 데미지 처리
-            _hp -= _damage;
+            _hp -= damage;
             if (_hp <= 0)
             {
                 _state = State.Die;
@@ -210,4 +239,59 @@ public class Enemy : BaseObject
         }
     }
 
+    private void OnTriggerExitMagneticField(Collider collision)
+    {
+        MagneticField magneticField = collision.gameObject.GetComponent<MagneticField>();
+        if (magneticField != null && magneticField == _currentMagneticField)
+        {
+            StopMagneticFieldDamage();
+        }
+    }
+
+    private void StartMagneticFieldDamage(MagneticField magneticField)
+    {
+        if (_magneticFieldTimer != null)
+        {
+            return;
+        }
+
+        _currentMagneticField = magneticField;
+        TakeDamage(magneticField.Damage);
+
+        _magneticFieldTimer = Observable.Interval(TimeSpan.FromSeconds(_magneticDamageInterval))
+            .Subscribe(_ =>
+            {
+                if (_currentMagneticField != null && _currentMagneticField.gameObject != null)
+                {
+                    TakeDamage(_currentMagneticField.Damage);
+                }
+                else
+                {
+                    StopMagneticFieldDamage();
+                }
+            }).AddTo(_disposables);
+    }
+
+    private void StopMagneticFieldDamage()
+    {
+        if (_magneticFieldTimer != null)
+        {
+            _magneticFieldTimer.Dispose();
+            _magneticFieldTimer = null;
+            _currentMagneticField = null;
+        }
+    }
+    
+    private void TakeDamage(float damage)
+    {
+        _animator.SetTrigger("TakeDamage");
+        _hp -= damage;
+        
+        Debug.Log($"{gameObject.name} 데미지: {damage}, 남은 HP: {_hp}");
+        
+        if (_hp <= 0)
+        {
+            _state = State.Die;
+        }
+    }
 }

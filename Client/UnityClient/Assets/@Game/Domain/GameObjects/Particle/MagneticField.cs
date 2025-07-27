@@ -72,13 +72,15 @@ public class MagneticField : BaseObject
 
     private void PushBullet()
     {
-        
+
         Managers.Resource.Destroy(this.gameObject);
-        
+
     }
 
     private void Move()
     {
         this.transform.position = _ownerTransform.position;
     }
+    
+    
 }

@@ -9,7 +9,7 @@ public partial class BaseObject : InitBase
 
     public int ObjectId { get; set; }
 
-    protected readonly CompositeDisposable _disposables = new CompositeDisposable();
+    protected CompositeDisposable _disposables { get; private set; } = new CompositeDisposable();
 
     public override bool Init()
     {
@@ -34,6 +34,7 @@ public partial class BaseObject : InitBase
     {
         _spwanInit = false;
         _disposables.Dispose();
+        _disposables = new CompositeDisposable();
     }
 
     public virtual void SetInfo(int dataTemplate)
@@ -45,6 +46,7 @@ public partial class BaseObject : InitBase
     {
         _init = false;
         _disposables.Dispose();
+        _disposables = new CompositeDisposable();
     }
 
     #region Static Functions
