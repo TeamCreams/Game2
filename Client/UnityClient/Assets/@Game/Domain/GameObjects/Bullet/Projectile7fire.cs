@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Waterspell : BulletParticle
+public class Projectile7fire : BulletParticle
 {
     public override bool Init()
     {
@@ -37,13 +37,4 @@ public class Waterspell : BulletParticle
         base.SetParents(parent);
         this.gameObject.transform.parent = parent;
     }
-    // public void OnParticleCollision(GameObject other)
-    // {
-    //     if (!other.GetComponent<Enemy>())
-    //     {
-    //         return;
-    //     }
-
-    // }
 }
-

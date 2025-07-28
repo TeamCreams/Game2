@@ -10,7 +10,7 @@ using UniRx.Triggers;
 public partial class Weapon : BaseObject
 {
     Transform _ownerTransform = null;
-    private float _creatTime = 3.0f;
+    private float _creatTime = 1.0f;
     private int _id = 0;
     private WeaponData _info;
     private GameObject _weapon = null;

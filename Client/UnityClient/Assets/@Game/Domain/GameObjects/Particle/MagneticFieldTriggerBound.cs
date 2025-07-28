@@ -1,7 +1,15 @@
+using Data;
 using UnityEngine;
 
-public class Waterspell : BulletParticle
+public class MagneticFieldTriggerBound : BaseObject
 {
+    private int _id = 0;
+    private float _damage;
+    public float Damage
+    {
+        get => _damage;
+    }
+
     public override bool Init()
     {
         if (false == base.Init())
@@ -18,7 +26,6 @@ public class Waterspell : BulletParticle
         {
             return false;
         }
-
         return true;
     }
 
@@ -30,20 +37,16 @@ public class Waterspell : BulletParticle
     public override void SetInfo(int dataTemplate)
     {
         base.SetInfo(dataTemplate);
-        this.transform.position = Vector3.zero;
+        _id = DataTemplateID;
     }
-    public override void SetParents(Transform parent)
+    public void SetBulletInfo(float damage)
     {
-        base.SetParents(parent);
-        this.gameObject.transform.parent = parent;
+        _damage = damage;
     }
-    // public void OnParticleCollision(GameObject other)
-    // {
-    //     if (!other.GetComponent<Enemy>())
-    //     {
-    //         return;
-    //     }
+    public void SetParent(Transform parent)
+    {
+        this.transform.parent = parent;
+        this.transform.localPosition = Vector3.zero;
+    }
 
-    // }
 }
-

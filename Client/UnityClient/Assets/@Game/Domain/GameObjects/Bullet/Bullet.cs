@@ -91,13 +91,13 @@ public class Bullet : BaseObject
         {
             _bulletParticle = Managers.Object.Spawn<BulletParticle>(_dummy.BulletTypeMap[_id].Name, Vector3.zero, 0, 0, this.gameObject.transform); // 포지션이 이동을 해야하는데 안하는 듯?
             _bulletParticle.SetParents(this.gameObject.transform);
-            _bulletParticle.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.LookRotation(this.transform.forward));
+            _bulletParticle.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.LookRotation(-this.transform.forward));
         }
         else
         {
             _bulletParticle.SetInfo(_bulletParticle.ObjectId);
             _bulletParticle.SetParents(this.gameObject.transform);
-            _bulletParticle.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.LookRotation(this.transform.forward));
+            _bulletParticle.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.LookRotation(-this.transform.forward));
         }
         _damage = _info.Damage;
     }

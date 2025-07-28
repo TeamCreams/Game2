@@ -27,6 +27,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 64513a96864d14089844b4d8e7e85509
+    m_Address: Projectile7fire
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 86eecf7c1c8004c5aba3489abb95a4f8
+    m_Address: MagneticFieldTriggerBound
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f1196807b37f245c29276243a749e6b5
     m_Address: Bullet
     m_ReadOnly: 0

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class EnemySpawner : BaseObject
 {
+    private int _enemyCount = 0;
     public override bool Init()
     {
         if (false == base.Init())
@@ -24,6 +25,10 @@ public class EnemySpawner : BaseObject
         Observable.Interval(TimeSpan.FromSeconds(5))
             .Subscribe(_ =>
             {
+                if (3 < _enemyCount)
+                {
+                    return;
+                }
                  Spawner();
             }).AddTo(this);
 
@@ -39,7 +44,11 @@ public class EnemySpawner : BaseObject
 
     private void Spawner()
     {
+        _enemyCount++;
+        // 위치 랜덤하게
         var enemy = Managers.Object.Spawn<Enemy>(Vector3.zero, 0, 10000);
+        //Contexts.BattleRush.OnClickSpawnAbilityButton?.OnNext(20001);
+
         //var enemy =  Managers.Resource.Instantiate("Enemy");
         //Contexts.BattleRush.EnemyObjectIdList.Add(enemy.ObjectId);
     }

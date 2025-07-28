@@ -9,14 +9,10 @@ public class MagneticField : BaseObject
     private float _lifeTime = 2f; // 총알 생존 시간 (2초)
     private int _id = 0;
     private BulletData _info;
-    private float _damage;
-    DummyData _dummy;
-    Transform _ownerTransform = null;
-
-    public float Damage
-    {
-        get => _damage;
-    }
+    private DummyData _dummy;
+    private Transform _ownerTransform = null;
+    private MagneticFieldTriggerBound _magneticFieldTriggerBound = null;
+    
     public override bool Init()
     {
         if (false == base.Init())
@@ -47,12 +43,31 @@ public class MagneticField : BaseObject
                 Move();
             }).AddTo(_disposables);
 
+        //_info.Damage, _info.ID 넣으면 참조에러 남
+        if (_magneticFieldTriggerBound == null)
+        {
+            _magneticFieldTriggerBound = Managers.Object.Spawn<MagneticFieldTriggerBound>(Vector3.zero, 0, 100000);
+
+            if (_magneticFieldTriggerBound != null)
+            {
+                _magneticFieldTriggerBound.gameObject.SetActive(true);
+                _magneticFieldTriggerBound.SetBulletInfo(10);
+                _magneticFieldTriggerBound.SetParent(this.gameObject.transform);
+            }
+        }
+        else
+        {
+            _magneticFieldTriggerBound.gameObject.SetActive(true);
+            _magneticFieldTriggerBound.SetBulletInfo(10);
+            _magneticFieldTriggerBound.SetParent(this.gameObject.transform);
+        }
         return true;
     }
 
     public override void OnDespawn()
     {
         base.OnDespawn();
+        //Managers.Resource.Destroy(_magneticFieldTriggerBound.gameObject);
     }
 
     public override void SetInfo(int dataTemplate)
@@ -63,7 +78,6 @@ public class MagneticField : BaseObject
 
         _info = _dummy.BulletDataDict[_id];
         _lifeTime = _info.LifeTime;
-        _damage = _info.Damage;
     }
     public void SetOwner(Transform ownerObject)
     {
@@ -76,11 +90,9 @@ public class MagneticField : BaseObject
         Managers.Resource.Destroy(this.gameObject);
 
     }
-
     private void Move()
     {
         this.transform.position = _ownerTransform.position;
     }
-    
-    
+
 }
